@@ -250,7 +250,7 @@ export default function LawyerArchivePage() {
   if (!user || (userRole !== "LAWYER" && userRole !== "ADMIN")) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--bg-primary)]">
-        <div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[var(--text-muted)] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -310,15 +310,15 @@ export default function LawyerArchivePage() {
         </div>
 
         {!isVerified ? (
-          <div className={`rounded-3xl border border-amber-300/40 dark:border-amber-700/50 bg-[var(--bg-card)] p-8 md:p-12 text-center max-w-2xl mx-auto shadow-sm my-6`}>
-            <div className="w-16 h-16 rounded-2xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 mx-auto flex items-center justify-center mb-4">
+          <div className={`rounded-3xl border border-[var(--text-primary)]/10 bg-[var(--bg-card)] p-8 md:p-12 text-center max-w-2xl mx-auto shadow-sm my-6`}>
+            <div className="w-16 h-16 rounded-2xl bg-[var(--bg-surface)] text-[var(--text-muted)] mx-auto flex items-center justify-center mb-4">
               <Lock className="w-8 h-8" />
             </div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-300/40 mb-3">
-              <Clock className="w-3.5 h-3.5 animate-pulse" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[var(--text-primary)]/5 text-[var(--text-muted)] border border-[var(--text-primary)]/10 mb-3">
+              <Clock className="w-3.5 h-3.5" />
               <span>{isBn ? "ভেরিফিকেশন প্রক্রিয়াধীন" : "Verification Pending"}</span>
             </div>
-            <h2 className="text-xl md:text-2xl font-serif font-bold text-[var(--text-primary)] mb-2">
+            <h2 className="text-xl md:text-2xl font-semibold tracking-tight text-[var(--text-primary)] mb-2">
               {isBn ? "আর্কাইভ ও পে-আউট ফিচার লক করা আছে" : "Archive & Payout Features are Locked"}
             </h2>
             <p className="text-xs md:text-sm text-[var(--text-muted)] max-w-lg mx-auto mb-6">
@@ -337,7 +337,7 @@ export default function LawyerArchivePage() {
               <button
                 type="button"
                 onClick={() => router.push("/admin")}
-                className="px-5 py-2.5 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer inline-flex items-center gap-1.5 shadow-sm"
+                className="px-5 py-2.5 rounded-xl text-xs font-semibold bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 hover:opacity-90 transition-opacity cursor-pointer inline-flex items-center gap-1.5 shadow-sm"
               >
                 <ShieldAlert className="w-3.5 h-3.5" />
                 <span>{isBn ? "অ্যাডমিন অনুমোদন প্যানেল খুলুন" : "Open Admin Approval Panel"}</span>
@@ -373,7 +373,7 @@ export default function LawyerArchivePage() {
                   <span className="font-mono text-[11px] px-2 py-0.5 rounded-md bg-[var(--bg-surface)] text-[var(--text-muted)]">
                     {item.id}
                   </span>
-                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded-md">
+                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[var(--text-muted)] bg-[var(--text-primary)]/5 px-2 py-0.5 rounded-md">
                     <ShieldCheck className="w-3 h-3" />
                     {isBn ? "ভেরিফাইড ও সিলমোহরকৃত" : "Verified & Sealed"}
                   </span>
@@ -397,7 +397,7 @@ export default function LawyerArchivePage() {
                     {isBn ? item.statuteBn : item.statuteEn}
                   </span>
                   {item.advocateName && (
-                    <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
+                    <span className="flex items-center gap-1 text-[var(--text-muted)] font-medium">
                       <Sparkles className="w-3 h-3" />
                       {item.advocateName.split(",")[0]}
                     </span>
@@ -421,7 +421,7 @@ export default function LawyerArchivePage() {
 
           {filtered.length === 0 && (
             <div className={`p-12 text-center rounded-2xl border ${borderClass} bg-[var(--bg-card)]`}>
-              <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto mb-3" />
+              <CheckCircle2 className="w-10 h-10 text-[var(--text-muted)] mx-auto mb-3" />
               <p className="text-sm font-semibold text-[var(--text-primary)]">
                 {isBn ? "কোনো আর্কাইভ রেকর্ড পাওয়া যায়নি" : "No archived contracts found"}
               </p>
@@ -443,7 +443,7 @@ export default function LawyerArchivePage() {
                 <p className="text-lg sm:text-2xl font-bold font-mono text-[var(--text-primary)] mt-1 truncate">
                   ৳{(earnings?.total_earned_bdt ?? earnings?.total_earned_credits ?? 7000).toLocaleString()}
                 </p>
-                <span className="text-[10px] text-emerald-500 font-semibold truncate block">
+                <span className="text-[10px] text-[var(--text-muted)] font-semibold truncate block">
                   {isBn ? "আইনি ফি থেকে" : "From statutory reviews"}
                 </span>
               </div>
@@ -452,7 +452,7 @@ export default function LawyerArchivePage() {
                 <p className="text-[10px] uppercase font-bold text-[var(--text-muted)] tracking-wider">
                   {isBn ? "উত্তোলনযোগ্য ব্যালেন্স" : "Wallet Balance"}
                 </p>
-                <p className="text-lg sm:text-2xl font-bold font-mono text-amber-500 mt-1 truncate">
+                <p className="text-lg sm:text-2xl font-bold font-mono text-[var(--text-primary)] mt-1 truncate">
                   ৳{(earnings?.wallet_balance_bdt ?? earnings?.pending_payout_credits ?? 2500).toLocaleString()}
                 </p>
                 <span className="text-[10px] text-[var(--text-muted)] truncate block">
@@ -467,7 +467,7 @@ export default function LawyerArchivePage() {
                 <p className="text-lg sm:text-2xl font-bold font-mono text-[var(--text-primary)] mt-1 truncate">
                   {earnings?.completed_reviews ?? 7}
                 </p>
-                <span className="text-[10px] text-sky-500 font-semibold truncate block">
+                <span className="text-[10px] text-[var(--text-muted)] font-semibold truncate block">
                   {isBn ? "আইনগত সিলমোহরকৃত" : "Digitally sealed"}
                 </span>
               </div>
@@ -478,7 +478,7 @@ export default function LawyerArchivePage() {
                 </p>
                 <p className="text-lg sm:text-2xl font-bold font-mono text-[var(--text-primary)] mt-1 truncate inline-flex items-center gap-1.5">
                   <span>{earnings?.rating ?? earnings?.avg_rating ?? 4.8}</span>
-                  <Star className="w-4 h-4 text-amber-500 fill-amber-500 shrink-0" />
+                  <Star className="w-4 h-4 text-[var(--text-muted)] fill-[var(--text-muted)] shrink-0" />
                 </p>
                 <span className="text-[10px] text-[var(--text-muted)] truncate block">
                   {isBn ? "ক্লায়েন্ট সন্তুষ্টি" : "Client feedback"}
@@ -490,11 +490,11 @@ export default function LawyerArchivePage() {
             <div className={`p-6 sm:p-8 rounded-3xl border ${borderClass} bg-[var(--bg-card)] shadow-sm space-y-6`}>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                  <div className="w-10 h-10 rounded-2xl bg-[var(--bg-surface)] flex items-center justify-center text-[var(--text-muted)]">
                     <Wallet className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-base sm:text-lg font-serif font-bold text-[var(--text-primary)]">
+                    <h3 className="text-base sm:text-lg font-semibold tracking-tight text-[var(--text-primary)]">
                       {isBn ? "অর্থ উত্তোলন রিকোয়েস্ট (MFS ও ব্যাংক)" : "Request Multi-Channel Payout"}
                     </h3>
                     <p className="text-xs text-[var(--text-muted)]">
@@ -532,7 +532,7 @@ export default function LawyerArchivePage() {
               </div>
 
               {withdrawalSuccess && (
-                <div className="p-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-xs font-semibold flex items-center gap-2">
+                <div className="p-4 rounded-2xl border border-[var(--text-primary)]/10 bg-[var(--bg-surface)] text-[var(--text-primary)] text-xs font-semibold flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 shrink-0" />
                   <span>{withdrawalSuccess}</span>
                 </div>
@@ -608,7 +608,7 @@ export default function LawyerArchivePage() {
                   <button
                     type="submit"
                     disabled={isSubmittingWithdrawal}
-                    className="w-full py-2.5 px-4 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 shadow-sm"
+                    className="w-full py-2.5 px-4 rounded-xl text-xs font-bold bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 hover:opacity-90 transition-opacity cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 shadow-sm"
                   >
                     {isSubmittingWithdrawal ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -627,7 +627,7 @@ export default function LawyerArchivePage() {
 
             {/* Withdrawal History Table */}
             <div className={`p-6 rounded-3xl border ${borderClass} bg-[var(--bg-card)] space-y-4`}>
-              <h4 className="text-sm font-serif font-bold text-[var(--text-primary)]">
+              <h4 className="text-sm font-semibold tracking-tight text-[var(--text-primary)]">
                 {isBn ? "সাম্প্রতিক উত্তোলনের ইতিহাস" : "Recent Payout Requests"}
               </h4>
 
@@ -653,7 +653,7 @@ export default function LawyerArchivePage() {
                             <td className="py-2.5 text-[var(--text-muted)]">
                               {new Date(w.requested_at).toLocaleDateString()}
                             </td>
-                            <td className="py-2.5 font-bold text-emerald-500">৳{w.amount_bdt ?? w.amount_credits}</td>
+                            <td className="py-2.5 font-bold text-[var(--text-primary)]">৳{w.amount_bdt ?? w.amount_credits}</td>
                             <td className="py-2.5">
                               <span className="px-2 py-0.5 rounded-md bg-[var(--bg-surface)] text-[var(--text-primary)] text-[10px] font-bold">
                                 {w.payout_method || "BKASH"}
@@ -669,12 +669,10 @@ export default function LawyerArchivePage() {
                             </td>
                             <td className="py-2.5 text-right">
                               <span
-                                className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                                  st === "PAID" || st === "APPROVED"
-                                    ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                                    : st === "REJECTED"
+                                className={`px-2 py-0.5 rounded-md text-[10px] font-semibold ${
+                                  st === "REJECTED"
                                     ? "bg-rose-500/10 text-rose-600 dark:text-rose-400"
-                                    : "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                                    : "bg-[var(--text-primary)]/5 text-[var(--text-muted)]"
                                 }`}
                               >
                                 {st}
@@ -705,12 +703,12 @@ export default function LawyerArchivePage() {
                     <span className="font-mono text-[10px] px-2 py-0.5 rounded-md bg-[var(--bg-card)] text-[var(--text-muted)] border border-[var(--text-primary)]/10 print:border-neutral-400 print:text-neutral-700">
                       {selectedPreview.id}
                     </span>
-                    <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                    <span className="text-[11px] font-semibold text-[var(--text-muted)] flex items-center gap-1">
                       <ShieldCheck className="w-3.5 h-3.5" />
                       {isBn ? "সংবিধিবদ্ধ সিলমোহরকৃত অডিট" : "Statutory Sealed Audit"}
                     </span>
                   </div>
-                  <h2 className="text-base sm:text-lg font-serif font-bold text-[var(--text-primary)] truncate print:text-neutral-900">
+                  <h2 className="text-base sm:text-lg font-semibold tracking-tight text-[var(--text-primary)] truncate print:text-neutral-900">
                     {isBn ? selectedPreview.titleBn : selectedPreview.titleEn}
                   </h2>
                   <p className="text-xs text-[var(--text-muted)] mt-0.5 print:text-neutral-700 truncate">
@@ -725,7 +723,7 @@ export default function LawyerArchivePage() {
                     className="p-1.5 sm:p-2 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--text-primary)]/5 transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-semibold"
                     title={isBn ? "অডিট মেমো প্রিন্ট / পিডিএফ ডাউনলোড করুন" : "Print / Export Audit Memo as PDF"}
                   >
-                    <Printer className="w-4 h-4 text-sky-500" />
+                    <Printer className="w-4 h-4" />
                     <span className="hidden sm:inline">{isBn ? "প্রিন্ট / PDF" : "Print / PDF"}</span>
                   </button>
                   <button

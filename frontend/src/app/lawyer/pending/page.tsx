@@ -484,15 +484,15 @@ export default function LawyerPendingPage() {
         {!isVerified ? (
           <div className="my-6 max-w-2xl mx-auto">
             {isPending && (
-              <div className="rounded-3xl border border-amber-300/40 dark:border-amber-700/50 bg-(--bg-card) p-8 md:p-12 text-center shadow-sm">
-                <div className="w-16 h-16 rounded-2xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 mx-auto flex items-center justify-center mb-4 shadow-inner">
+              <div className="rounded-3xl border border-(--text-primary)/10 bg-(--bg-card) p-8 md:p-12 text-center shadow-sm">
+                <div className="w-16 h-16 rounded-2xl bg-(--bg-surface) text-(--text-muted) mx-auto flex items-center justify-center mb-4">
                   <Lock className="w-8 h-8" />
                 </div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-300/40 mb-3">
-                  <Clock className="w-3.5 h-3.5 animate-pulse" />
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-(--text-primary)/5 text-(--text-muted) border border-(--text-primary)/10 mb-3">
+                  <Clock className="w-3.5 h-3.5" />
                   {isBn ? "ভেরিফিকেশন প্রক্রিয়াধীন" : "Verification Pending"}
                 </div>
-                <h2 className="text-xl md:text-2xl font-serif font-bold text-(--text-primary) mb-2">
+                <h2 className="text-xl md:text-2xl font-sans font-semibold tracking-tight text-(--text-primary) mb-2">
                   {isBn ? "চুক্তিপত্র অ্যাক্সেস লক করা আছে" : "Client Contract Queue is Locked"}
                 </h2>
                 <p className="text-xs md:text-sm text-(--text-muted) leading-relaxed max-w-lg mx-auto mb-6">
@@ -511,7 +511,7 @@ export default function LawyerPendingPage() {
                       }
                     }}
                     disabled={isRefreshingVerification}
-                    className="px-5 py-2.5 rounded-xl text-xs font-semibold bg-amber-600 hover:bg-amber-700 text-white transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs disabled:opacity-50"
+                    className="px-5 py-2.5 rounded-xl text-xs font-semibold bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5 shadow-xs disabled:opacity-50"
                   >
                     <RefreshCw className={`w-3.5 h-3.5 ${isRefreshingVerification ? "animate-spin" : ""}`} />
                     <span>

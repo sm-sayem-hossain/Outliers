@@ -388,12 +388,12 @@ export default function ContractMindPage() {
             )}
 
             {/* Party Perspective Selector */}
-            <div className="w-full max-w-xl mb-4 p-1.5 sm:p-2.5 rounded-2xl bg-(--bg-surface) border border-(--text-primary)/10 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-2.5">
-              <span className="hidden sm:flex text-xs font-semibold text-(--text-primary) px-1 items-center gap-1.5 shrink-0">
+            <div className="w-full max-w-xl mb-4 p-1.5 sm:p-2.5 rounded-2xl bg-(--bg-surface) border border-(--text-primary)/10 shadow-sm flex flex-row items-center justify-between gap-2">
+              <span className="flex text-[11px] sm:text-xs font-semibold text-(--text-primary) px-1 items-center gap-1.5 shrink-0 whitespace-nowrap">
                 <Shield className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
-                <span>{isBn ? "কার স্বার্থে অডিট হবে:" : "Audit Perspective:"}</span>
+                <span>{isBn ? "অডিট পার্সপেক্টিভ:" : "Audit Perspective:"}</span>
               </span>
-              <div className="flex items-center gap-1 sm:gap-1.5 w-full sm:w-auto">
+              <div className="flex items-center gap-1 sm:gap-1.5 min-w-0">
                 <button
                   type="button"
                   onClick={() => setAuditedFor("CLIENT")}
@@ -403,8 +403,8 @@ export default function ContractMindPage() {
                       : "text-(--text-muted) hover:text-(--text-primary) hover:bg-(--text-primary)/5 font-medium"
                   }`}
                 >
-                  <Shield className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
-                  <span>{isBn ? (<>ক্লায়েন্ট<span className="hidden sm:inline"> / ক্রেতা</span></>) : "Protect Client"}</span>
+                  <Shield className="w-3.5 h-3.5 shrink-0" />
+                  <span className="whitespace-nowrap">{isBn ? (<>ক্লায়েন্ট<span className="hidden sm:inline"> / ক্রেতা</span></>) : "Protect Client"}</span>
                 </button>
                 <button
                   type="button"
@@ -415,8 +415,8 @@ export default function ContractMindPage() {
                       : "text-(--text-muted) hover:text-(--text-primary) hover:bg-(--text-primary)/5 font-medium"
                   }`}
                 >
-                  <Briefcase className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                  <span>{isBn ? (<><span className="hidden sm:inline">সার্ভিস </span>ভেন্ডর</>) : "Protect Vendor"}</span>
+                  <Briefcase className="w-3.5 h-3.5 shrink-0" />
+                  <span className="whitespace-nowrap">{isBn ? (<><span className="hidden sm:inline">সার্ভিস </span>ভেন্ডর</>) : "Protect Vendor"}</span>
                 </button>
                 <button
                   type="button"
@@ -427,8 +427,8 @@ export default function ContractMindPage() {
                       : "text-(--text-muted) hover:text-(--text-primary) hover:bg-(--text-primary)/5 font-medium"
                   }`}
                 >
-                  <Scale className="w-3.5 h-3.5 text-sky-500 shrink-0" />
-                  <span>{isBn ? "নিরপেক্ষ" : "Neutral"}</span>
+                  <Scale className="w-3.5 h-3.5 shrink-0" />
+                  <span className="whitespace-nowrap">{isBn ? "নিরপেক্ষ" : "Neutral"}</span>
                 </button>
               </div>
             </div>

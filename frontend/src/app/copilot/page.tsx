@@ -1221,7 +1221,7 @@ export default function CopilotPage() {
   }
 
   return (
-    <AppShell mainClassName="pb-24! md:pb-3!" hideDock={isDrawerOpen}>
+    <AppShell mainClassName="pb-20! md:pb-3!" hideDock={isDrawerOpen}>
       {/* ─── Desktop: Left Vertical Actions (Aligned directly with vertical dock: left-4, width 60px) ─── */}
       {!isDrawerOpen && (
         <div className="hidden md:flex fixed left-4 top-5 z-40 flex-col items-center gap-2.5 w-[60px] select-none">
@@ -1247,7 +1247,7 @@ export default function CopilotPage() {
         </div>
       )}
 
-      <div className="h-[calc(100dvh-10.5rem)] md:h-[calc(100vh-2.75rem)] max-w-5xl mx-auto flex flex-col min-h-0 font-sans">
+      <div className="h-[calc(100dvh-8.75rem)] md:h-[calc(100vh-2.75rem)] max-w-5xl mx-auto flex flex-col min-h-0 font-sans">
         {/* ─── Mobile Only: Sticky Floating Actions (History & New Chat) ─── */}
         <div className="md:hidden fixed top-4 left-4 z-40 flex items-center gap-1 p-1 rounded-full bg-(--bg-card) border border-(--text-primary)/10 shadow-lg">
           <button

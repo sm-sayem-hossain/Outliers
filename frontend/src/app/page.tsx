@@ -2079,7 +2079,13 @@ export default function LandingAndAuthPage() {
                               <button type="button" onClick={() => { setSelectedRole("general"); setRegStep("form"); }}
                                 className="group w-full p-4 rounded-2xl text-left transition-all cursor-pointer bg-[var(--text-primary)]/[0.035] hover:bg-[var(--text-primary)]/[0.065]">
                                 <div className="flex items-center gap-3.5">
-                                  <User className="w-5 h-5 text-[var(--text-primary)] opacity-75 group-hover:opacity-100 group-hover:scale-110 shrink-0 transition-all" />
+                                  <Image
+                                    src="/general-user.png"
+                                    alt={isBn ? "সাধারণ ব্যবহারকারী" : "General User"}
+                                    width={20}
+                                    height={20}
+                                    className="w-5 h-5 object-contain dark:invert opacity-75 group-hover:opacity-100 group-hover:scale-110 shrink-0 transition-all"
+                                  />
                                   <div className="flex-1 min-w-0">
                                     <div className="font-semibold text-sm text-[var(--text-primary)]">{isBn ? "সাধারণ ব্যবহারকারী" : "General User"}</div>
                                     <div className="text-xs text-[var(--text-muted)] mt-0.5">{isBn ? "SME, ফ্রিল্যান্সার, HR — চুক্তি ও আইনি প্রশ্নের জন্য" : "SME, Freelancer, HR — contracts & legal queries"}</div>
@@ -2091,7 +2097,13 @@ export default function LandingAndAuthPage() {
                               <button type="button" onClick={() => { setSelectedRole("lawyer"); setRegStep("form"); }}
                                 className="group w-full p-4 rounded-2xl text-left transition-all cursor-pointer bg-[var(--text-primary)]/[0.035] hover:bg-[var(--text-primary)]/[0.065]">
                                 <div className="flex items-center gap-3.5">
-                                  <Scale className="w-5 h-5 text-[var(--text-primary)] opacity-75 group-hover:opacity-100 group-hover:scale-110 shrink-0 transition-all" />
+                                  <Image
+                                    src="/lawyer.png"
+                                    alt={isBn ? "আইনজীবী / অ্যাডভোকেট" : "Lawyer / Advocate"}
+                                    width={20}
+                                    height={20}
+                                    className="w-5 h-5 object-contain dark:invert opacity-75 group-hover:opacity-100 group-hover:scale-110 shrink-0 transition-all"
+                                  />
                                   <div className="flex-1 min-w-0">
                                     <div className="font-semibold text-sm text-[var(--text-primary)]">
                                       {isBn ? "আইনজীবী / অ্যাডভোকেট" : "Lawyer / Advocate"}
@@ -2105,7 +2117,7 @@ export default function LandingAndAuthPage() {
                               <button type="button" onClick={() => { setSelectedRole("enterprise"); setRegStep("form"); }}
                                 className="group w-full p-4 rounded-2xl text-left transition-all cursor-pointer bg-[var(--text-primary)]/[0.035] hover:bg-[var(--text-primary)]/[0.065]">
                                 <div className="flex items-center gap-3.5">
-                                  <Building2 className="w-5 h-5 text-[var(--text-primary)] opacity-75 group-hover:opacity-100 group-hover:scale-110 shrink-0 transition-all" />
+                                  <Landmark className="w-5 h-5 text-[var(--text-primary)] opacity-75 group-hover:opacity-100 group-hover:scale-110 shrink-0 transition-all" />
                                   <div className="flex-1 min-w-0">
                                     <div className="font-semibold text-sm text-[var(--text-primary)]">
                                       {isBn ? "কোম্পানি / এন্টারপ্রাইজ" : "Company / Enterprise"}
@@ -2133,10 +2145,14 @@ export default function LandingAndAuthPage() {
                               <ChevronLeft className="w-3.5 h-3.5" />
                               {isBn ? "ফিরে যান" : "Back to role selection"}
                             </button>
-                            <div className="flex items-center gap-2 mb-4">
-                              <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${selectedRole === "general" ? "bg-blue-100 dark:bg-blue-900/40" : selectedRole === "lawyer" ? "bg-amber-100 dark:bg-amber-900/40" : "bg-purple-100 dark:bg-purple-900/40"}`}>
-                                {selectedRole === "general" ? <User className="w-4 h-4 text-blue-600 dark:text-blue-400" /> : selectedRole === "lawyer" ? <Gavel className="w-4 h-4 text-amber-600 dark:text-amber-400" /> : <Building2 className="w-4 h-4 text-purple-600 dark:text-purple-400" />}
-                              </div>
+                            <div className="flex items-center gap-2.5 mb-4">
+                              {selectedRole === "general" ? (
+                                <Image src="/general-user.png" alt="General User" width={20} height={20} className="w-5 h-5 object-contain dark:invert shrink-0" />
+                              ) : selectedRole === "lawyer" ? (
+                                <Image src="/lawyer.png" alt="Lawyer" width={20} height={20} className="w-5 h-5 object-contain dark:invert shrink-0" />
+                              ) : (
+                                <Landmark className="w-5 h-5 text-[var(--text-primary)] shrink-0" />
+                              )}
                               <span className="text-sm font-semibold text-[var(--text-primary)]">
                                 {selectedRole === "general" ? (isBn ? "সাধারণ ব্যবহারকারী নিবন্ধন" : "General User Registration") : selectedRole === "lawyer" ? (isBn ? "আইনজীবী নিবন্ধন আবেদন" : "Lawyer Registration") : (isBn ? "কোম্পানি ও টিম নিবন্ধন" : "Enterprise Registration")}
                               </span>
