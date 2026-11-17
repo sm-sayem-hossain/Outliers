@@ -53,7 +53,7 @@
 - **API & Network Integration**:
   - `src/lib/api.ts`: Fetch-based singleton HTTP client automatically attaching Bearer tokens, enforcing a 90-second timeout with `AbortController`, handling 401 unauthenticated redirects, supporting `FormData` uploads, and parsing FastAPI/Pydantic validation errors.
   - `src/lib/apiServices.ts`: Strongly typed service module covering all domain modules (contracts, chat sessions, lawyer tasks/earnings/multi-channel withdrawals, enterprise members/playbooks, SSLCommerz payments, settings, and admin gateway ledger & credit adjustments).
-  - Next.js Rewrites (`next.config.ts`): Proxies `/api/:path*` to `BACKEND_INTERNAL_URL` || `NEXT_PUBLIC_API_URL` || `https://legal-copilot-backend-npq7.onrender.com`.
+  - Next.js Rewrites (`next.config.ts`): Proxies `/api/:path*` to `BACKEND_INTERNAL_URL` || `NEXT_PUBLIC_API_URL` || `https://legal-copilot-backend-088i.onrender.com`.
 
 - **Client-Side Sovereign Logic**:
   - `src/lib/piiMasker.ts`: In-browser regex and entity redaction mask for emails, Bangladeshi phone numbers (`+8801...`), and known corporate entities before cloud transmission.
@@ -85,7 +85,7 @@
 ## Environment variables and configuration
 | Variable | Description | Default / Fallback |
 |---|---|---|
-| `NEXT_PUBLIC_API_URL` | Base URL for FastAPI backend | `https://legal-copilot-backend-npq7.onrender.com` |
+| `NEXT_PUBLIC_API_URL` | Base URL for FastAPI backend | `https://legal-copilot-backend-088i.onrender.com` |
 | `BACKEND_INTERNAL_URL` | Private network backend endpoint used in Next.js rewrites | Falls back to `NEXT_PUBLIC_API_URL` |
 | `NODE_ENV` | Node execution environment | `development` / `production` |
 | `VERCEL_OIDC_TOKEN` | Vercel deployment credentials | Managed by Vercel CLI |

@@ -24,6 +24,9 @@ import {
 
 } from "@/lib/auth";
 
+import { loginDemo } from "@/lib/apiServices";
+
+
 
 
 // ─── Role & Verification Types ─────────────────────────────────────────────
@@ -424,7 +427,9 @@ interface AuthContextType {
 
 
 
-  loginAsDemoGeneral: () => void;
+  loginAsDemoRole: (role: "general" | "lawyer" | "enterprise_admin" | "admin") => Promise<UserProfile>;
+
+  loginAsDemoGeneral: () => Promise<void> | void;
 
   loginAsDemoLawyer: () => void;
 
@@ -1385,17 +1390,56 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // ── Demo shortcuts ──
 
-  const loginAsDemoGeneral = () => persistDemo(DEMO_GENERAL);
+  const loginAsDemoRole = async (role: "general" | "lawyer" | "enterprise_admin" | "admin"): Promise<UserProfile> => {
+    let mockProfile: UserProfile = DEMO_GENERAL;
+    if (role === "lawyer") mockProfile = DEMO_LAWYER;
+    else if (role === "enterprise_admin") mockProfile = DEMO_ENTERPRISE_ADMIN;
+    else if (role === "admin") mockProfile = DEMO_ADMIN;
 
-  const loginAsDemoLawyer = () => persistDemo(DEMO_LAWYER);
+    try {
+      const data = await loginDemo(role);
+      const resolvedRole = normalizeUserRole(data.role);
+      saveTokenResponse(data, resolvedRole);
 
-  const loginAsDemoAdmin = () => persistDemo(DEMO_ADMIN);
+      const userProfile: UserProfile = {
+        id: String(data.user_id),
+        name: data.full_name,
+        firstName: data.full_name.split(" ")[0] || "User",
+        lastName: data.full_name.split(" ").slice(1).join(" ") || "",
+        email: data.email,
+        mobile: mockProfile.mobile,
+        role: resolvedRole,
+        isEmailVerified: data.is_verified,
+        isPhoneVerified: data.is_phone_verified,
+        creditBalance: data.credit_balance,
+        enterprise_credit_balance: mockProfile.enterprise_credit_balance,
+        lawyerProfile: mockProfile.lawyerProfile,
+        enterpriseProfile: mockProfile.enterpriseProfile,
+        member_credit_quota: mockProfile.member_credit_quota,
+        member_credit_used: mockProfile.member_credit_used,
+      };
 
-  const loginAsDemoEnterpriseAdmin = () => persistDemo(DEMO_ENTERPRISE_ADMIN);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("cm_role", String(resolvedRole).toUpperCase());
+        localStorage.setItem("app_auth_v2", JSON.stringify(userProfile));
+      }
 
+      setUser(userProfile);
+      setIsAuthenticated(true);
+      return userProfile;
+    } catch (err) {
+      console.warn("[Auth] Backend demo-login failed, falling back to local demo profile:", err);
+      persistDemo(mockProfile);
+      return mockProfile;
+    }
+  };
+
+  const loginAsDemoGeneral = async () => { await loginAsDemoRole("general"); };
+  const loginAsDemoLawyer = async () => { await loginAsDemoRole("lawyer"); };
+  const loginAsDemoAdmin = async () => { await loginAsDemoRole("admin"); };
+  const loginAsDemoEnterpriseAdmin = async () => { await loginAsDemoRole("enterprise_admin"); };
+  const loginAsDemoEnterprise = loginAsDemoEnterpriseAdmin;
   const loginAsDemoEnterpriseMember = () => persistDemo(DEMO_ENTERPRISE_MEMBER);
-
-  const loginAsDemoEnterprise = () => persistDemo(DEMO_ENTERPRISE_ADMIN);
 
 
 
@@ -1576,6 +1620,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         suspendLawyerByAdmin,
 
         getPendingLawyersList,
+
+        loginAsDemoRole,
 
         loginAsDemoGeneral,
 

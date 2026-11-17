@@ -108,7 +108,25 @@ html, body {
     size: A4 portrait;
   }
 
-  html, body, #__next, main, [data-nextjs-scroll-focus-boundary] {
+  /* Force all background theme variables to pure white for PDF export */
+  :root {
+    --bg-primary: #FFFFFF !important;
+    --bg-secondary: #FFFFFF !important;
+    --bg-surface: #FFFFFF !important;
+    --bg-card: #FFFFFF !important;
+    --text-primary: #111111 !important;
+  }
+
+  html, 
+  body, 
+  #__next, 
+  main, 
+  [data-nextjs-scroll-focus-boundary],
+  .print-clean-paper,
+  .print\:bg-white,
+  [style*="var(--bg-primary)"],
+  [style*="var(--bg-surface)"],
+  [style*="var(--bg-secondary)"] {
     background: #FFFFFF !important;
     background-color: #FFFFFF !important;
     color: #111111 !important;

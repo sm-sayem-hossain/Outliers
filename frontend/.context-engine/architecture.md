@@ -14,7 +14,7 @@ The frontend interfaces with:
    - `enterprise_member`: Corporate team members auditing agreements under company playbooks.
    - `admin`: Super-administrators managing advocates, enterprises, financial payouts, and user accounts.
 2. **Backend API**:
-   - ContractMind FastAPI Backend (`https://legal-copilot-backend-npq7.onrender.com` or local rewrite proxy `/api/*`).
+   - ContractMind FastAPI Backend (`https://legal-copilot-backend-088i.onrender.com` or local rewrite proxy `/api/*`).
 3. **External CDNs & Assets**:
    - Google Fonts (Inter, Tiro Bangla) and Supabase Cloud Storage (remote images and avatars).
 

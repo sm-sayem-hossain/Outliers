@@ -737,19 +737,19 @@ export default function ProfilePage() {
 
         {/* ── 5. LAWYER SPECIFIC CREDENTIALS ── */}
         {isLawyer && (
-          <div className="p-6 rounded-3xl border border-indigo-500/20 bg-indigo-500/5 shadow-xs space-y-4">
-            <div className="flex items-center justify-between border-b border-indigo-500/10 pb-3">
-              <h3 className="text-xs uppercase tracking-wider font-semibold text-indigo-900 dark:text-indigo-300 flex items-center gap-1.5">
-                <Gavel className="w-4 h-4 text-indigo-500" />
+          <div className="p-6 rounded-3xl border border-(--text-primary)/10 bg-(--bg-card) shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-(--text-primary)/10 pb-3">
+              <h3 className="text-xs uppercase tracking-wider font-semibold text-(--text-muted) flex items-center gap-1.5">
+                <Gavel className="w-4 h-4 shrink-0" />
                 <span>{isBn ? "বাংলাদেশ বার কাউন্সিল সনদ ও এনরোলমেন্ট" : "Bar Council Credentials"}</span>
               </h3>
               {verificationStatus === "verified" ? (
-                <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full">
+                <span className="inline-flex items-center gap-1 text-xs font-medium text-(--text-muted) bg-(--text-primary)/5 border border-(--text-primary)/10 px-2.5 py-0.5 rounded-full">
                   <ShieldCheck className="w-3.5 h-3.5" />
                   <span>{isBn ? "যাচাইকৃত অ্যাডভোকেট" : "Verified Advocate"}</span>
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1 text-xs font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded-full">
+                <span className="inline-flex items-center gap-1 text-xs font-medium text-(--text-muted) bg-(--text-primary)/5 border border-(--text-primary)/10 px-2.5 py-0.5 rounded-full">
                   <Clock className="w-3.5 h-3.5" />
                   <span>{isBn ? "ভেরিফিকেশন প্রক্রিয়াধীন" : "Verification Pending"}</span>
                 </span>
@@ -777,7 +777,7 @@ export default function ProfilePage() {
                   <button
                     type="button"
                     onClick={() => router.push("/lawyer/pending")}
-                    className="px-4 py-2.5 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white transition-colors cursor-pointer shadow-xs flex items-center gap-1.5"
+                    className="px-4 py-2.5 rounded-xl text-xs font-semibold bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 hover:opacity-90 transition-opacity cursor-pointer shadow-xs flex items-center gap-1.5"
                   >
                     <Gavel className="w-3.5 h-3.5" />
                     <span>{isBn ? "আইনজীবী ওয়ার্কস্পেসে প্রবেশ করুন →" : "Open Advocate Workspace →"}</span>

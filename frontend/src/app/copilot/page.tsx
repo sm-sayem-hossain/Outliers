@@ -1140,43 +1140,43 @@ export default function CopilotPage() {
   }, [sessions, historySearch, isBn]);
 
   // Empty-screen starter prompts tailored to role & contract mode
-  const starterPrompts = useMemo(() => {
+  const starterPrompts = useMemo<{ label: string; prompt: string }[]>(() => {
     if (activeContractContext) {
       return isBn
         ? [
-            "এই চুক্তির সবচেয়ে ঝুঁকিপূর্ণ ধারাগুলো কী কী?",
-            "টার্মিনেশন ও ক্ষতিপূরণ ধারা বাংলাদেশের আইন অনুযায়ী কতটা বৈধ?",
-            "আমার স্বার্থ রক্ষায় কোন ধারাগুলো সংশোধন (Redline) করা উচিত?",
+            { label: "ঝুঁকি পরীক্ষা", prompt: "এই চুক্তির সবচেয়ে ঝুঁকিপূর্ণ ধারাগুলো কী কী?" },
+            { label: "বৈধতা", prompt: "টার্মিনেশন ও ক্ষতিপূরণ ধারা বাংলাদেশের আইন অনুযায়ী কতটা বৈধ?" },
+            { label: "সংশোধন", prompt: "আমার স্বার্থ রক্ষায় কোন ধারাগুলো সংশোধন (Redline) করা উচিত?" },
           ]
         : [
-            "What are the highest-risk clauses in this contract?",
-            "Are the termination & indemnity terms enforceable under Bangladesh law?",
-            "Which clauses should I redline to protect my rights?",
+            { label: "Risk Audit", prompt: "What are the highest-risk clauses in this contract?" },
+            { label: "Enforceability", prompt: "Are the termination & indemnity terms enforceable under Bangladesh law?" },
+            { label: "Redlines", prompt: "Which clauses should I redline to protect my rights?" },
           ];
     }
     if (isLawyer) {
       return isBn
         ? [
-            "দণ্ডবিধি ৩০২ বনাম ৩০৪: শাস্তি ও জামিন প্রক্রিয়া",
-            "সুনির্দিষ্ট প্রতিকার আইন: ধারা ৪২ ও ৫৪ বিশ্লেষণ",
-            "ফৌজদারি কার্যবিধি ৪৯৮: আগাম জামিনের আইনি ভিত্তি",
+            { label: "ফৌজদারি আইন", prompt: "দণ্ডবিধি ৩০২ বনাম ৩০৪: শাস্তি ও জামিন প্রক্রিয়া" },
+            { label: "দেওয়ানি প্রতিকার", prompt: "সুনির্দিষ্ট প্রতিকার আইন: ধারা ৪২ ও ৫৪ বিশ্লেষণ" },
+            { label: "জামিন কৌশল", prompt: "ফৌজদারি কার্যবিধি ৪৯৮: আগাম জামিনের আইনি ভিত্তি" },
           ]
         : [
-            "Section 302 vs 304 Penal Code with bail posture",
-            "Declaratory & injunction suits (SR Act 42 & 54)",
-            "Anticipatory bail principles under CrPC 498",
+            { label: "Criminal Practice", prompt: "Section 302 vs 304 Penal Code with bail posture" },
+            { label: "Civil Remedies", prompt: "Declaratory & injunction suits (SR Act 42 & 54)" },
+            { label: "Bail Strategy", prompt: "Anticipatory bail principles under CrPC 498" },
           ];
     }
     return isBn
       ? [
-          "চাকরির চুক্তিতে নন-কম্পিট ধারা কি বৈধ?",
-          "বিনা নোটিশে বরখাস্তের আইনি প্রতিকার কী?",
-          "ভাড়া চুক্তির প্রধান আইনি সতর্কতা",
+          { label: "চাকরির আইন", prompt: "চাকরির চুক্তিতে নন-কম্পিট ধারা কি বৈধ?" },
+          { label: "শ্রম আইন", prompt: "বিনা নোটিশে বরখাস্তের আইনি প্রতিকার কী?" },
+          { label: "ভাড়া চুক্তি", prompt: "ভাড়া চুক্তির প্রধান আইনি সতর্কতা" },
         ]
       : [
-          "Are non-compete clauses valid in Bangladesh?",
-          "Remedies for termination without notice under Labour Act",
-          "Key legal checks before signing a rental agreement",
+          { label: "Employment", prompt: "Are non-compete clauses valid in Bangladesh?" },
+          { label: "Labour Rights", prompt: "Remedies for termination without notice under Labour Act" },
+          { label: "Tenancy", prompt: "Key legal checks before signing a rental agreement" },
         ];
   }, [activeContractContext, isLawyer, isBn]);
 
@@ -1221,7 +1221,7 @@ export default function CopilotPage() {
   }
 
   return (
-    <AppShell mainClassName="pb-24! md:pb-3!" hideDock={isDrawerOpen}>
+    <AppShell mainClassName="pb-20! md:pb-3!" hideDock={isDrawerOpen}>
       {/* ─── Desktop: Left Vertical Actions (Aligned directly with vertical dock: left-4, width 60px) ─── */}
       {!isDrawerOpen && (
         <div className="hidden md:flex fixed left-4 top-5 z-40 flex-col items-center gap-2.5 w-[60px] select-none">
@@ -1247,7 +1247,7 @@ export default function CopilotPage() {
         </div>
       )}
 
-      <div className="h-[calc(100dvh-10.5rem)] md:h-[calc(100vh-2.75rem)] max-w-5xl mx-auto flex flex-col min-h-0 font-sans">
+      <div className="h-[calc(100dvh-8.75rem)] md:h-[calc(100vh-2.75rem)] max-w-5xl mx-auto flex flex-col min-h-0 font-sans">
         {/* ─── Mobile Only: Sticky Floating Actions (History & New Chat) ─── */}
         <div className="md:hidden fixed top-4 left-4 z-40 flex items-center gap-1 p-1 rounded-full bg-(--bg-card) border border-(--text-primary)/10 shadow-lg">
           <button
@@ -1339,29 +1339,61 @@ export default function CopilotPage() {
                     priority
                   />
                 </div>
+                {(activeContractContext || isLawyer) && (
+                  <p className="mb-2 inline-flex items-center gap-2.5 font-mono text-[10px] uppercase tracking-widest text-(--text-muted) not-italic">
+                    <span className="h-px w-6 bg-(--text-primary)/20" aria-hidden />
+                    {isBn
+                      ? activeContractContext
+                        ? "চুক্তি পর্যালোচনা মোড"
+                        : "আইনজীবীদের জন্য প্রস্তুত"
+                      : activeContractContext
+                        ? "Contract review mode"
+                        : "Built for practising lawyers"}
+                    <span className="h-px w-6 bg-(--text-primary)/20" aria-hidden />
+                  </p>
+                )}
                 <h1 className="text-2xl sm:text-4xl font-semibold tracking-tight mb-1.5 text-(--text-primary)">
                   {isBn
-                    ? "আইনি কোপাইলট"
-                    : "Legal Copilot"}
+                    ? isLawyer
+                      ? "আইনি গবেষণা"
+                      : "আইনি কোপাইলট"
+                    : isLawyer
+                      ? "Legal Research"
+                      : "Legal Copilot"}
                 </h1>
                 <p className="text-xs sm:text-sm text-(--text-muted) max-w-md mx-auto font-normal leading-relaxed mb-4">
-                  {isBn
-                    ? "বাংলাদেশি আইন ও আদালতের নজির থেকে নির্ভরযোগ্য আইনি উত্তর পান।"
-                    : "Ask any legal question grounded in Bangladesh laws and precedents."}
+                  {isBn ? (
+                    activeContractContext ? (
+                      "এই চুক্তির ধারা-ভিত্তিক ঝুঁকি, বৈধতা ও সংশোধন পরামর্শ নিন।"
+                    ) : isLawyer ? (
+                      "নজির অনুসন্ধান, যুক্তি খসড়া ও শুনানি প্রস্তুতি — বাংলাদেশের আইন ও ধারার সঠিক উদ্ধৃতিসহ।"
+                    ) : (
+                      "বাংলাদেশি আইন ও আদালতের নজির থেকে নির্ভরযোগ্য আইনি উত্তর পান।"
+                    )
+                  ) : activeContractContext ? (
+                    "Clause-level risk, enforceability, and redline guidance for this contract under Bangladesh law."
+                  ) : isLawyer ? (
+                    "Precedent research, argument drafting, and hearing prep — with statute-precise citations from Bangladesh law."
+                  ) : (
+                    "Ask any legal question grounded in Bangladesh laws and precedents."
+                  )}
                 </p>
 
                 <div className="w-full max-w-2xl flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-2 text-left">
-                  {starterPrompts.map((prompt, idx) => (
+                  {starterPrompts.map((item, idx) => (
                     <button
                       key={idx}
                       type="button"
-                      onClick={() => handleSendPrompt(prompt)}
-                      className="group p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl bg-(--bg-card) border border-(--text-primary)/10 hover:border-(--text-primary)/30 hover:shadow-xs transition-all text-left cursor-pointer flex items-center sm:flex-col sm:items-start justify-between gap-2.5 sm:gap-2.5"
+                      onClick={() => handleSendPrompt(item.prompt)}
+                      className="group p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl bg-(--bg-card) border border-(--text-primary)/10 hover:border-(--text-primary)/30 hover:shadow-xs transition-all text-left cursor-pointer flex items-center sm:flex-col sm:items-start justify-between gap-2.5 sm:gap-2"
                     >
                       <span className="text-xs sm:text-sm font-normal text-(--text-primary)/90 group-hover:text-(--text-primary) leading-snug">
-                        {prompt}
+                        {item.prompt}
                       </span>
-                      <span className="text-[11px] sm:text-xs font-semibold text-indigo-600 dark:text-indigo-400 inline-flex items-center gap-1 shrink-0">
+                      <span className="inline-flex items-center gap-1 text-[11px] sm:text-xs font-semibold text-indigo-600 dark:text-indigo-400 shrink-0 sm:mt-1">
+                        <span className="hidden sm:inline font-mono text-[9px] uppercase tracking-widest font-normal text-(--text-muted) sm:mr-auto">
+                          {item.label}
+                        </span>
                         <span>{isBn ? "জিজ্ঞাসা করুন" : "Ask now"}</span>
                         <ChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 group-hover:translate-x-0.5 transition-transform" />
                       </span>

@@ -386,7 +386,7 @@ The frontend operates using native **React Context providers** and browser stora
 
 ## 10. Complete Backend API Service Reference
 
-The API client (`src/lib/api.ts`) communicates with the FastAPI backend either through the Next.js rewrite proxy (`/api/*`) or directly to `NEXT_PUBLIC_API_URL` (`https://legal-copilot-backend-npq7.onrender.com`).
+The API client (`src/lib/api.ts`) communicates with the FastAPI backend either through the Next.js rewrite proxy (`/api/*`) or directly to `NEXT_PUBLIC_API_URL` (`https://legal-copilot-backend-088i.onrender.com`).
 
 ### Authentication & User Endpoints
 - `POST /api/auth/login`: Email and password authentication.
@@ -474,7 +474,7 @@ The API client (`src/lib/api.ts`) communicates with the FastAPI backend either t
 ### Environment Variables
 | Variable | Description | Default / Production Value |
 |---|---|---|
-| `NEXT_PUBLIC_API_URL` | Base URL of ContractMind FastAPI Backend | `https://legal-copilot-backend-npq7.onrender.com` |
+| `NEXT_PUBLIC_API_URL` | Base URL of ContractMind FastAPI Backend | `https://legal-copilot-backend-088i.onrender.com` |
 | `BACKEND_INTERNAL_URL` | Private network backend endpoint used in Next.js rewrites | Falls back to `NEXT_PUBLIC_API_URL` |
 | `NODE_ENV` | Node execution environment | `development` / `production` |
 

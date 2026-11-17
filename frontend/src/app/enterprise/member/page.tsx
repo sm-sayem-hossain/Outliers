@@ -14,7 +14,8 @@ import {
 } from "@/lib/apiServices";
 import {
   Building2, FileText, Bot, Coins, ShieldCheck, 
-  ArrowUpRight, BookOpen, Plus, Loader2, RefreshCw, Clock
+  ArrowUpRight, BookOpen, Plus, Loader2, RefreshCw, Clock,
+  Download, Search, CheckCircle2, ChevronDown, ChevronUp, FileCode
 } from "lucide-react";
 
 export default function EnterpriseMemberPage() {
@@ -26,6 +27,61 @@ export default function EnterpriseMemberPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [myContracts, setMyContracts] = useState<ContractHistoryItem[]>([]);
   const [playbooks, setPlaybooks] = useState<Playbook[]>([]);
+  const [playbookSearch, setPlaybookSearch] = useState("");
+  const [isPlaybookExpanded, setIsPlaybookExpanded] = useState(true);
+
+  const handleDownloadPlaybookJson = (pb: Playbook) => {
+    const rules = Array.isArray(pb.rules) ? pb.rules : [];
+    const exportData = {
+      title: pb.title,
+      version: pb.version || "1.0",
+      company: companyName,
+      exported_at: new Date().toISOString(),
+      total_rules: rules.length,
+      rules: rules,
+    };
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${pb.title.replace(/\s+/g, "_")}_rules.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleDownloadPlaybookMd = (pb: Playbook) => {
+    const rules = Array.isArray(pb.rules) ? pb.rules : [];
+    let md = `# ${pb.title}\n`;
+    md += `**Organization:** ${companyName}\n`;
+    md += `**Version:** ${pb.version || "1.0"} | **Status:** Active Enforced Standard\n`;
+    md += `> **Total Rules:** ${rules.length} Rules Enforced\n\n`;
+    md += `## Statutory & Internal Commercial Rules\n\n`;
+
+    rules.forEach((r: any, idx: number) => {
+      const rid = r.rule_id || `RULE-${idx + 1}`;
+      const cat = r.category || "General";
+      const desc = r.rule_description || r.companyRequirementEn || "";
+      const redline = r.suggested_redline || r.standardClauseTemplate || "";
+      const strictness = r.strictness || (r.severity === "HIGH" || r.severity === "CRITICAL" ? "MANDATORY" : "ADVISORY");
+      const statute = r.statute || r.violated_law || "";
+
+      md += `### ${idx + 1}. [${rid}] ${cat} (${String(strictness).toUpperCase()})\n\n`;
+      if (statute) md += `- **Statutory Reference:** ${statute}\n`;
+      md += `- **Requirement:** ${desc}\n`;
+      if (redline) {
+        md += `- **Mandatory Redline Clause:**\n  > "${redline}"\n`;
+      }
+      md += `\n---\n\n`;
+    });
+
+    const blob = new Blob([md], { type: "text/markdown;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${pb.title.replace(/\s+/g, "_")}_Playbook.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   useEffect(() => {
     if (!user) {
@@ -308,20 +364,174 @@ export default function EnterpriseMemberPage() {
           </div>
         </div>
 
-        {/* ── COMPANY PLAYBOOK ── */}
+        {/* ── COMPANY PLAYBOOK & COMPLIANCE RULES ── */}
         {playbooks.length > 0 && (
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-[var(--text-primary)] flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-purple-500" />
-              <span>{isBn ? "কোম্পানি প্লেবুক ও টেমপ্লেট" : "Company Approved Boilerplate"}</span>
-            </h3>
-
-            {playbooks.map((pb) => (
-              <div key={pb.id} className={`p-5 rounded-2xl border ${borderClass} bg-[var(--bg-card)]`}>
-                <h4 className="font-bold text-sm mb-2">{pb.title}</h4>
-                <p className="text-xs text-(--text-muted)">Total Rules: {pb.rule_count}</p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                  <BookOpen className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold text-[var(--text-primary)]">
+                    {isBn ? "কোম্পানি প্লেবুক ও কমপ্লায়েন্স গাইডলাইন" : "Company Playbook & Compliance Rules"}
+                  </h3>
+                  <p className="text-xs text-[var(--text-muted)]">
+                    {isBn
+                      ? "চুক্তি অডিটের সময় AI এই নিয়মগুলো এবং বাংলাদেশ আইন একসাথে প্রয়োগ করে।"
+                      : "These corporate guidelines are automatically balanced against Bangladesh Law during contract audits."}
+                  </p>
+                </div>
               </div>
-            ))}
+
+              <button
+                onClick={() => setIsPlaybookExpanded((prev) => !prev)}
+                className={`text-xs font-semibold px-3 py-1.5 rounded-xl border ${borderClass} hover:bg-[var(--bg-card)] transition-colors flex items-center gap-1.5 cursor-pointer text-[var(--text-muted)] hover:text-[var(--text-primary)]`}
+              >
+                <span>{isPlaybookExpanded ? (isBn ? "লুকান" : "Collapse") : (isBn ? "বিস্তারিত দেখুন" : "Expand Rules")}</span>
+                {isPlaybookExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+              </button>
+            </div>
+
+            {playbooks.map((pb) => {
+              const rules = Array.isArray(pb.rules) ? pb.rules : [];
+              const filteredRules = rules.filter((r: any) => {
+                if (!playbookSearch.trim()) return true;
+                const q = playbookSearch.toLowerCase();
+                const rid = String(r.rule_id || "").toLowerCase();
+                const cat = String(r.category || "").toLowerCase();
+                const desc = String(r.rule_description || r.companyRequirementEn || "").toLowerCase();
+                const statute = String(r.statute || r.violated_law || "").toLowerCase();
+                return rid.includes(q) || cat.includes(q) || desc.includes(q) || statute.includes(q);
+              });
+
+              return (
+                <div key={pb.id} className={`p-5 rounded-2xl border ${borderClass} bg-[var(--bg-card)] space-y-4`}>
+                  {/* Playbook Header */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[var(--text-primary)]/10">
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h4 className="font-bold text-sm text-[var(--text-primary)]">{pb.title}</h4>
+                        <span className="font-mono text-[10px] px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-700 dark:text-purple-300 border border-purple-500/20 font-bold">
+                          v{pb.version || "1.0"}
+                        </span>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          <span>{isBn ? "সক্রিয় স্ট্যান্ডার্ড" : "Active Standard"}</span>
+                        </span>
+                      </div>
+                      <p className="text-xs text-[var(--text-muted)] mt-1">
+                        {isBn ? `মোট ${rules.length} টি রুল কার্যকর` : `${rules.length} corporate rules enforced`} · {new Date(pb.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        onClick={() => handleDownloadPlaybookMd(pb)}
+                        className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-[var(--bg-surface)] hover:bg-[var(--text-primary)]/5 border border-[var(--text-primary)]/10 flex items-center gap-1.5 cursor-pointer text-[var(--text-primary)] transition-all"
+                        title={isBn ? "প্লেবুক Markdown ডাউনলোড করুন" : "Download Playbook Markdown"}
+                      >
+                        <Download className="w-3.5 h-3.5 text-blue-500" />
+                        <span>{isBn ? "পলিসি (.md)" : "Policy (.md)"}</span>
+                      </button>
+                      <button
+                        onClick={() => handleDownloadPlaybookJson(pb)}
+                        className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-[var(--bg-surface)] hover:bg-[var(--text-primary)]/5 border border-[var(--text-primary)]/10 flex items-center gap-1.5 cursor-pointer text-[var(--text-primary)] transition-all"
+                        title={isBn ? "কাঁচা রুলস JSON ডাউনলোড করুন" : "Download Rules JSON"}
+                      >
+                        <FileCode className="w-3.5 h-3.5 text-purple-500" />
+                        <span>{isBn ? "রুলস JSON" : "Rules JSON"}</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Rules Accordion Content */}
+                  {isPlaybookExpanded && (
+                    <div className="space-y-3 pt-1">
+                      {rules.length > 3 && (
+                        <div className="relative">
+                          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
+                          <input
+                            type="text"
+                            value={playbookSearch}
+                            onChange={(e) => setPlaybookSearch(e.target.value)}
+                            placeholder={isBn ? "রুল বা ক্যাটাগরি সার্চ করুন..." : "Search rules by category, keyword, or statute..."}
+                            className={`w-full pl-9 pr-3 py-1.5 text-xs rounded-xl border ${borderClass} bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-purple-500`}
+                          />
+                        </div>
+                      )}
+
+                      <div className="space-y-2.5 max-h-[420px] overflow-y-auto pr-1">
+                        {filteredRules.length === 0 ? (
+                          <p className="text-xs text-[var(--text-muted)] text-center py-4">
+                            {isBn ? "কোনো রুল পাওয়া যায়নি।" : "No matching rules found."}
+                          </p>
+                        ) : (
+                          filteredRules.map((rule: any, idx: number) => {
+                            const rid = rule.rule_id || `RULE-${idx + 1}`;
+                            const cat = rule.category || "General";
+                            const desc = rule.rule_description || rule.companyRequirementEn || "";
+                            const redline = rule.suggested_redline || rule.standardClauseTemplate || "";
+                            const sev = String(rule.severity || "").toUpperCase();
+                            const isMandatory = rule.strictness === "mandatory" || sev === "CRITICAL" || sev === "HIGH";
+                            const statute = rule.statute || rule.violated_law || "";
+
+                            return (
+                              <div
+                                key={rid + idx}
+                                className={`p-3.5 rounded-xl border ${borderClass} bg-[var(--bg-surface)] hover:border-[var(--text-primary)]/20 transition-all space-y-2`}
+                              >
+                                <div className="flex items-center justify-between gap-2 flex-wrap">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <span className="font-mono text-[10px] px-2 py-0.5 rounded-md bg-[var(--bg-card)] text-[var(--text-muted)] border border-[var(--text-primary)]/10 font-bold">
+                                      #{idx + 1}
+                                    </span>
+                                    <span className="font-mono text-[10px] px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-700 dark:text-purple-300 border border-purple-500/20 font-bold">
+                                      {rid}
+                                    </span>
+                                    <span className="text-xs font-bold text-[var(--text-primary)]">
+                                      {cat}
+                                    </span>
+                                    {statute && (
+                                      <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-400 font-mono">
+                                        {statute}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-md ${
+                                    isMandatory
+                                      ? "bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300"
+                                      : "bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300"
+                                  }`}>
+                                    {isMandatory ? (isBn ? "বাধ্যতামূলক" : "Mandatory") : (isBn ? "পরামর্শমূলক" : "Advisory")}
+                                  </span>
+                                </div>
+
+                                <p className="text-xs text-[var(--text-primary)]/90 leading-relaxed font-sans">
+                                  {desc}
+                                </p>
+
+                                {redline && (
+                                  <div className="p-2.5 rounded-lg bg-[var(--bg-card)] border border-[var(--text-primary)]/10">
+                                    <p className="text-[10px] uppercase font-bold tracking-wider text-[var(--text-muted)] mb-1 flex items-center gap-1.5">
+                                      <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                                      <span>{isBn ? "স্ট্যান্ডার্ড রেডলাইন টেমপ্লেট:" : "Approved Redline Template:"}</span>
+                                    </p>
+                                    <p className="text-xs font-mono text-[var(--text-muted)] leading-relaxed italic">
+                                      "{redline}"
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
 

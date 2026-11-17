@@ -806,7 +806,7 @@ export default function MarkdownViewer({
 
   return (
     <div
-      className={`p-6 md:p-10 rounded-3xl border border-(--text-primary)/10 bg-(--bg-card) shadow-sm font-sans leading-relaxed print:p-0 print:border-none print:shadow-none print:bg-transparent print:rounded-none ${className}`}
+      className={`p-6 md:p-10 rounded-3xl border border-(--text-primary)/10 bg-(--bg-card) shadow-sm font-sans leading-relaxed print:p-0 print:border-none print:shadow-none print:bg-white print:rounded-none ${className}`}
     >
       <div className="max-w-4xl mx-auto space-y-1 print:max-w-none">
         {renderMarkdownContent(content)}

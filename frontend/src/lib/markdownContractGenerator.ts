@@ -77,6 +77,8 @@ export function generateContractAuditMarkdown(
     compliantCount?: number;
     isLawyerVerified?: boolean;
     hitlStatus?: string;
+    clauses?: unknown[];
+    clauses_analysis?: unknown[];
   }
 ): string {
   const isBn = language === "bn";
@@ -344,10 +346,15 @@ export function generateRealContractAuditMarkdown(
     : "Clauses evaluated under codified statutes of Bangladesh.";
   const summary = cleanExecutiveSummary(result.summary || result.executive_summary, summaryFallback);
 
+  const bnToEnDigits = (str: string) =>
+    str.replace(/[০-৯]/g, (d) => String("০১২৩৪৫৬৭৮৯".indexOf(d)));
+
   const rawClauses = (result.clauses || []).slice();
   rawClauses.sort((a: any, b: any) => {
-    const numA = parseInt(String(a.clause_number || "").replace(/\D+/g, "") || "999", 10);
-    const numB = parseInt(String(b.clause_number || "").replace(/\D+/g, "") || "999", 10);
+    const cleanA = bnToEnDigits(String(a.clause_number || "")).replace(/\D+/g, "") || "999";
+    const cleanB = bnToEnDigits(String(b.clause_number || "")).replace(/\D+/g, "") || "999";
+    const numA = parseInt(cleanA, 10);
+    const numB = parseInt(cleanB, 10);
     return numA - numB;
   });
   const clauses = rawClauses;
@@ -520,6 +527,9 @@ export function generateRealContractAuditMarkdown(
     md += `- **Bangladesh Bar Council Enrollment No:** \`${advocateVerification.barCouncilNo}\`\n`;
     md += `- **Verification Timestamp:** ${advocateVerification.verifiedAt}\n`;
     md += `- **Advocate Seal Status:** \`APPROVED & DIGITALLY SEALED\`\n`;
+    if (advocateVerification?.advocateNotes) {
+      md += `\n**Advocate Statutory Advisory Notes:**\n> "${advocateVerification.advocateNotes}"\n\n`;
+    }
   } else {
     md += `> [!IMPORTANT]\n`;
     md += `> **PENDING ADVOCATE REVIEW**\n`;

@@ -28,7 +28,7 @@ const nextConfig: NextConfig = {
     const backendUrl =
       process.env.BACKEND_INTERNAL_URL ||
       process.env.NEXT_PUBLIC_API_URL ||
-      "https://legal-copilot-backend-npq7.onrender.com";
+      "https://legal-copilot-backend-088i.onrender.com";
 
     return [
       {

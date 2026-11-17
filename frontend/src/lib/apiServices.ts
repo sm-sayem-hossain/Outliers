@@ -3,6 +3,7 @@
  * Import these in page components instead of using dummy data.
  */
 import api from "@/lib/api";
+import { TokenResponse } from "@/lib/auth";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -212,6 +213,8 @@ export interface VerificationRequestResponse {
   memo_id: string | number;
   message: string;
   credits_deducted?: number;
+  assigned_lawyer_id?: number;
+  assigned_lawyer_name?: string;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -229,7 +232,7 @@ export async function uploadContract(
   formData.append("title", fileTitle);
   formData.append("file", file);
   formData.append("audited_for", auditedFor);
-  return api.upload<ContractAuditResult>("/api/contracts/upload", formData);
+  return api.upload<ContractAuditResult>("/api/contracts/upload", formData, undefined, 180000);
 }
 
 /** Get user's contract audit history (GET /api/contracts/history) */
@@ -273,9 +276,11 @@ export async function getContractHistory(
 
 /** Get a signed download URL for a contract (GET /api/contracts/{contract_id}/download) */
 export async function getContractDownloadUrl(
-  contractId: string | number
+  contractId: string | number,
+  original: boolean = false
 ): Promise<DownloadUrlResponse> {
-  const data = await api.get<any>(`/api/contracts/${contractId}/download`);
+  const query = original ? "?original=true" : "";
+  const data = await api.get<any>(`/api/contracts/${contractId}/download${query}`);
   return {
     download_url: data?.download_url ?? "",
     is_lawyer_verified: Boolean(data?.is_lawyer_verified),
@@ -572,6 +577,10 @@ export interface LawyerQueueItem {
   contract_id: string | number;
   file_name?: string;
   contract_title?: string;
+  original_filename?: string;
+  file_size_mb?: number;
+  file_mime_type?: string;
+  file_path?: string;
   domain?: string;
   overall_risk?: "LOW" | "MODERATE" | "HIGH" | "CRITICAL";
   priority?: "NORMAL" | "MEDIUM" | "HIGH" | "URGENT";
@@ -582,6 +591,7 @@ export interface LawyerQueueItem {
   expires_at?: string;
   offer_expires_at?: string;
   time_left_seconds?: number;
+  clauses_analysis?: any[];
 }
 
 export interface ActiveTask {
@@ -589,6 +599,10 @@ export interface ActiveTask {
   contract_id: string | number;
   file_name?: string;
   contract_title?: string;
+  original_filename?: string;
+  file_size_mb?: number;
+  file_mime_type?: string;
+  file_path?: string;
   domain?: string;
   overall_risk?: string;
   priority?: string;
@@ -742,6 +756,41 @@ export async function declineOffer(
 export async function getActiveTasks(): Promise<ActiveTask[]> {
   try {
     const res = await api.get<ActiveTask[]>("/api/lawyer/active");
+    if (Array.isArray(res)) return res;
+    return [];
+  } catch {
+    return [];
+  }
+}
+
+export interface LawyerCompletedTask {
+  memo_id: number | string;
+  contract_id: number | string;
+  contract_title: string;
+  original_filename?: string;
+  client_name?: string;
+  client_email?: string;
+  client_phone?: string;
+  file_size_mb?: number;
+  file_mime_type?: string;
+  file_path?: string;
+  hitl_status: string;
+  payout_bdt: number;
+  completed_at?: string;
+  verified_date_en?: string;
+  verified_date_bn?: string;
+  risk_score?: number;
+  overall_risk?: string;
+  lawyer_notes?: string;
+  signature_url?: string;
+  signed_contract_path?: string;
+  clauses_analysis?: any[];
+}
+
+/** Get lawyer's completed/archived tasks (GET /api/lawyer/completed) */
+export async function getCompletedTasks(): Promise<LawyerCompletedTask[]> {
+  try {
+    const res = await api.get<LawyerCompletedTask[]>("/api/lawyer/completed");
     if (Array.isArray(res)) return res;
     return [];
   } catch {
@@ -919,11 +968,12 @@ export interface PendingMember {
 }
 
 export interface Playbook {
-  id: string;
+  id: string | number;
   title: string;
-  version: string;
+  version?: string;
   is_active: boolean;
   rule_count: number;
+  rules?: any[];
   created_at: string;
 }
 
@@ -1008,8 +1058,9 @@ export async function listPlaybooks(): Promise<Playbook[]> {
       id: item.id,
       title: item.title,
       version: item.version ?? "1.0",
-      is_active: item.is_active,
-      rule_count: item.rules_count ?? item.rule_count ?? 0,
+      is_active: Boolean(item.is_active),
+      rule_count: item.rules_count ?? item.rule_count ?? (Array.isArray(item.rules) ? item.rules.length : 0),
+      rules: item.rules || item.rules_json || [],
       created_at: item.created_at,
     }));
   } catch {
@@ -1025,6 +1076,25 @@ export async function deletePlaybook(playbookId: string): Promise<void> {
 /** Activate a playbook */
 export async function activatePlaybook(playbookId: string): Promise<void> {
   await api.post(`/api/company/playbooks/${playbookId}/activate`);
+}
+
+/** Get a single playbook by ID */
+export async function getPlaybook(playbookId: string | number): Promise<Playbook> {
+  const item = await api.get<any>(`/api/company/playbooks/${playbookId}`);
+  return {
+    id: item.id,
+    title: item.title,
+    version: item.version ?? "1.0",
+    is_active: Boolean(item.is_active),
+    rule_count: item.rules_count ?? item.rule_count ?? (Array.isArray(item.rules) ? item.rules.length : 0),
+    rules: item.rules || item.rules_json || [],
+    created_at: item.created_at,
+  };
+}
+
+/** Update rules for an existing company playbook */
+export async function updatePlaybookRules(playbookId: string | number, rules: any[]): Promise<any> {
+  return api.put(`/api/company/playbooks/${playbookId}/rules`, { rules });
 }
 
 /** Get quota summary */
@@ -1821,4 +1891,74 @@ export async function subscribeNewsletter(email: string): Promise<NewsletterResp
 
 
 
+
+
+
+/** 
+ * Fast-access demo authentication for hackathon evaluation (POST /api/auth/demo-login)
+ * Auto-provisions and returns a valid JWT token for the requested role.
+ */
+export async function loginDemo(role: string): Promise<TokenResponse> {
+  return api.post<TokenResponse>("/api/auth/demo-login", { role });
+}
+
+// ──────────────────────────────────────────────────────────
+// SYSTEM CONFIG & INSTANT JUDGE MODE
+// ──────────────────────────────────────────────────────────
+
+export interface PlatformSystemStatus {
+  instant_judge_mode: boolean;
+  judge_lawyer_name: string;
+}
+
+export interface AdminApprovedLawyer {
+  lawyer_id: number;
+  user_id: number;
+  name: string;
+  email: string;
+  bar_council_id: string;
+  experience_years: number;
+}
+
+export interface AdminSystemConfig {
+  instant_judge_mode: boolean;
+  fixed_judge_lawyer_id: number | null;
+  fixed_judge_lawyer_name: string | null;
+  fixed_judge_lawyer_email: string | null;
+  updated_at: string | null;
+  updated_by: string | null;
+  approved_lawyers: AdminApprovedLawyer[];
+}
+
+export interface UpdateSystemConfigPayload {
+  instant_judge_mode?: boolean;
+  fixed_judge_lawyer_id?: number | null;
+  [key: string]: unknown;
+}
+
+/** Public endpoint to check if Instant Judge Mode is active */
+export async function getPlatformSystemStatus(): Promise<PlatformSystemStatus> {
+  try {
+    const res = await api.get<PlatformSystemStatus>("/api/platform/system-status");
+    return res || { instant_judge_mode: false, judge_lawyer_name: "" };
+  } catch {
+    return { instant_judge_mode: false, judge_lawyer_name: "" };
+  }
+}
+
+/** Get admin system configuration (Instant Judge Mode & Lawyers) */
+export async function getAdminSystemConfig(): Promise<AdminSystemConfig | null> {
+  try {
+    return await api.get<AdminSystemConfig>("/api/admin/system-config");
+  } catch {
+    return null;
+  }
+}
+
+/** Update admin system configuration (toggle Instant Judge Mode / change fixed lawyer) */
+export async function updateAdminSystemConfig(
+  payload: UpdateSystemConfigPayload
+): Promise<{ status: string; instant_judge_mode: boolean; fixed_judge_lawyer_id: number | null }> {
+  return api.patch("/api/admin/system-config", payload as Record<string, unknown>);
+}
 
