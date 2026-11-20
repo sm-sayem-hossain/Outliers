@@ -13,6 +13,7 @@ import {
   generateRealContractAuditMarkdown,
 } from "@/lib/markdownContractGenerator";
 import { runDispatchAlgorithm, INITIAL_DEMO_LAWYERS, DispatchDecision } from "@/lib/dispatcher";
+import { maskPii } from "@/lib/piiMasker";
 import {
   uploadContract,
   requestLawyerVerification,
@@ -237,12 +238,12 @@ export default function ContractMindPage() {
     setLawyerSealApplied(false);
     setUploadError(null);
 
-    const isSupported = /\.(pdf|docx|doc|png|jpe?g)$/i.test(file.name);
+    const isSupported = /\.(pdf|docx|doc|png|jpe?g|txt)$/i.test(file.name);
     if (!isSupported) {
       setUploadError(
         isBn
-          ? "ফাইল ফরম্যাট সমর্থিত নয়। ব্যাকএন্ড শুধুমাত্র .pdf, .docx, .doc, .png, .jpg ফাইল সমর্থন করে।"
-          : "Unsupported file format. The backend only allows: .pdf, .docx, .doc, .png, .jpg."
+          ? "ফাইল ফরম্যাট সমর্থিত নয়। ব্যাকএন্ড শুধুমাত্র .pdf, .docx, .doc, .png, .jpg, .txt ফাইল সমর্থন করে।"
+          : "Unsupported file format. The backend only allows: .pdf, .docx, .doc, .png, .jpg, .txt."
       );
       setIsAnalyzing(false);
       return;
@@ -251,7 +252,25 @@ export default function ContractMindPage() {
     setUploadFileName(file.name);
     setIsAnalyzing(true);
     try {
-      const result = await uploadContract(file, undefined, auditedFor);
+      let fileToUpload = file;
+      let clientPiiCount = 0;
+      if (file.name.toLowerCase().endsWith(".txt")) {
+        try {
+          const rawText = await file.text();
+          const masked = maskPii(rawText, true);
+          clientPiiCount = masked.stats.totalRedactions;
+          fileToUpload = new File([masked.redactedText], file.name, {
+            type: file.type || "text/plain",
+          });
+        } catch (err) {
+          console.warn("Client PII masking failed on file read:", err);
+        }
+      }
+
+      const result = await uploadContract(fileToUpload, undefined, auditedFor);
+      if (clientPiiCount > 0 && (!result.pii_redactions_count || result.pii_redactions_count === 0)) {
+        result.pii_redactions_count = clientPiiCount;
+      }
       setApiContractId(String(result.contract_id));
       setApiAuditResult(result);
       
@@ -539,6 +558,19 @@ export default function ContractMindPage() {
               </div>
             </div>
 
+            {/* Sovereign Client PII Shield Status Indicator */}
+            <div className="w-full max-w-xl flex items-center justify-between px-1 mb-3 text-[11px] text-(--text-muted)">
+              <div className="flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span>
+                  {isBn
+                    ? "সার্বভৌম PII শিল্ড সক্রিয় (NID, ফোন, ইমেইল ও নাম স্বয়ংক্রিয়ভাবে সুরক্ষিত)"
+                    : "Sovereign PII Shield Active (NID, phone, email & party names auto-scrubbed)"}
+                </span>
+              </div>
+              <span className="font-mono text-[10px] opacity-70">CLIENT & INGESTION PROTECTED</span>
+            </div>
+
             <div
               onDragOver={(e) => e.preventDefault()}
               onDrop={handleDrop}
@@ -669,7 +701,7 @@ export default function ContractMindPage() {
                     {language === "bn" ? "চুক্তির ফাইল এখানে ড্রপ করুন অথবা ব্রাউজ করুন" : "Drop contract PDF or DOCX here, or browse"}
                   </p>
                   <p className="text-xs text-(--text-muted)">
-                    {language === "bn" ? "সমর্থিত ফরম্যাট: .PDF, .DOCX, .DOC, .PNG, .JPG (সর্বোচ্চ ১৫ মেগাবাইট)" : "Supported formats: .PDF, .DOCX, .DOC, .PNG, .JPG (Max 15MB)"}
+                    {language === "bn" ? "সমর্থিত ফরম্যাট: .PDF, .DOCX, .DOC, .TXT, .PNG, .JPG (সর্বোচ্চ ১৫ মেগাবাইট)" : "Supported formats: .PDF, .DOCX, .DOC, .TXT, .PNG, .JPG (Max 15MB)"}
                   </p>
                   <button type="button" className="mt-6 px-5 py-2.5 rounded-full bg-(--accent-solid) text-(--accent-contrast) text-xs font-semibold hover:opacity-90 transition-opacity shadow-sm cursor-pointer">
                     {language === "bn" ? "ফাইল নির্বাচন করুন" : "Browse Files"}
@@ -692,19 +724,32 @@ export default function ContractMindPage() {
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 print:hidden">
-              <button
-                onClick={() => {
-                  setIsLoaded(false);
-                  setApiAuditResult(null);
-                  setApiContractId(null);
-                  setDispatchedDecision(null);
-                  router.push("/contractmind");
-                }}
-                className="text-xs font-medium flex items-center gap-1.5 transition-colors opacity-60 hover:opacity-100 cursor-pointer text-(--text-primary)"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>{language === "bn" ? "অন্য চুক্তিপত্র আপলোড করুন" : "Upload another agreement"}</span>
-              </button>
+              <div className="flex items-center gap-3 flex-wrap">
+                <button
+                  onClick={() => {
+                    setIsLoaded(false);
+                    setApiAuditResult(null);
+                    setApiContractId(null);
+                    setDispatchedDecision(null);
+                    router.push("/contractmind");
+                  }}
+                  className="text-xs font-medium flex items-center gap-1.5 transition-colors opacity-60 hover:opacity-100 cursor-pointer text-(--text-primary)"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>{language === "bn" ? "অন্য চুক্তিপত্র আপলোড করুন" : "Upload another agreement"}</span>
+                </button>
+
+                {apiAuditResult?.pii_redactions_count && apiAuditResult.pii_redactions_count > 0 ? (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
+                    <ShieldCheck className="w-3 h-3 shrink-0" />
+                    <span>
+                      {isBn
+                        ? `${apiAuditResult.pii_redactions_count}টি তথ্য সুরক্ষিত`
+                        : `${apiAuditResult.pii_redactions_count} PII item(s) scrubbed`}
+                    </span>
+                  </span>
+                ) : null}
+              </div>
 
               <div className="flex items-center gap-2">
                 <button onClick={handleDownloadReport} className="px-3 py-1.5 rounded-xl border border-(--text-primary)/10 text-xs font-medium text-(--text-muted) hover:text-(--text-primary) flex items-center gap-1.5 transition-colors cursor-pointer">

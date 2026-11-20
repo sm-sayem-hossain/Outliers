@@ -260,13 +260,47 @@ export default function LawyerPendingPage() {
     if (typeof window !== "undefined") {
       try {
         const stored = JSON.parse(localStorage.getItem("dispatched_pending_contracts") || "[]") as PendingContract[];
-        if (Array.isArray(stored) && stored.length > 0) {
-          setPendingList((prev) => {
-            const existingIds = new Set(prev.map((p) => p.id));
-            const additions = stored.filter((p) => !existingIds.has(p.id));
-            return [...additions, ...prev];
-          });
-        }
+        setPendingList((prev) => {
+          const existingIds = new Set(prev.map((p) => p.id));
+          const additions = stored.filter((p) => !existingIds.has(p.id));
+          const merged = [...additions, ...prev];
+          if (merged.length === 0) {
+            const now = Date.now();
+            return [
+              {
+                id: "cnt-9801",
+                clientName: "Tariqul Islam (Freelance Engineer)",
+                clientPhone: "+880 1712-345678",
+                titleEn: "Software Engineer IP & Employment Agreement",
+                titleBn: "সফটওয়্যার ইঞ্জিনিয়ার আইপি ও চাকরির চুক্তিপত্র",
+                submittedAtEn: "12m ago",
+                submittedAtBn: "১২ মিনিট আগে",
+                statuteEn: "Labour Act 2006 · § 27 Contract Act (Void Non-compete) · ৳1,000 Payout",
+                statuteBn: "বাংলাদেশ শ্রম আইন ২০০৬ ও চুক্তি আইন ১৮৭২ · ৳১,০০০ ফি",
+                riskCount: 4,
+                priority: "high" as const,
+                contractId: "employment-agreement",
+                submitDeadline: new Date(now + 2.75 * 3600 * 1000).toISOString(),
+              },
+              {
+                id: "cnt-9802",
+                clientName: "Apex Holdings Ltd.",
+                clientPhone: "+880 1819-554433",
+                titleEn: "Commercial Office Space Lease Deed",
+                titleBn: "বাণিজ্যিক অফিস স্পেস ইজারা চুক্তিপত্র",
+                submittedAtEn: "45m ago",
+                submittedAtBn: "৪৫ মিনিট আগে",
+                statuteEn: "Transfer of Property Act 1882 · § 74 Contract Act (Uncapped Indemnity) · ৳1,000 Payout",
+                statuteBn: "সম্পত্তি হস্তান্তর আইন ১৮৮২ ও চুক্তি আইন ১৮৭২ · ৳১,০০০ ফি",
+                riskCount: 3,
+                priority: "normal" as const,
+                contractId: "commercial-lease",
+                submitDeadline: new Date(now + 1.5 * 3600 * 1000).toISOString(),
+              },
+            ];
+          }
+          return merged;
+        });
       } catch (err) {
         console.error("Error reading dispatched contracts:", err);
       }

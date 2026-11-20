@@ -168,9 +168,18 @@ html, body {
 
   /* Avoid cutting clauses or memos across page breaks */
   .break-inside-avoid,
-  .print-avoid-break {
+  .print-avoid-break,
+  .audit-clause-card,
+  .audit-score-banner,
+  blockquote,
+  table tr {
     break-inside: avoid !important;
     page-break-inside: avoid !important;
+  }
+
+  h1, h2, h3, h4, h5, h6, thead th, .clause-head {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
   }
 
   /* Ensure code blocks, pre, and redline diffs never print as dark terminal widgets */

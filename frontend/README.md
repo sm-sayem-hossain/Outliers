@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Advotech Copilot — Web Frontend
 
-## Getting Started
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-blue?logo=react&logoColor=white)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-v4-38bdf8?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 
-First, run the development server:
+> **The Next.js 16 web application for Advotech Copilot (JusticeSphere AI & ContractMind).**  
+> For complete architecture, security, and full-stack documentation, please see the [Root Repository README](../README.md).
 
+---
+
+## 🚀 Quick Start
+
+### 1. Configure Environment
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env.local
+```
+Update `NEXT_PUBLIC_API_URL` to point to the backend:
+- Local Backend: `http://localhost:7860`
+- Production Backend: `https://legal-copilot-backend-088i.onrender.com`
+
+### 2. Install Dependencies
+```bash
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Run Development Server
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) with your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 4. Build for Production
+```bash
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🧭 Key Routes Overview
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `/` — Landing page with hero 3D visuals, feature highlights, and authentication modal
+- `/copilot` — Zero-hallucination statutory research copilot with Bangladesh Code citations
+- `/contractmind` — Contract PDF upload, client-side PII scrubbing, and statutory risk audit
+- `/archive` — Historical contract audits, compliance scores, and redlined DOCX exports
+- `/pricing` — Platform credit packages and bKash payment gateway
+- `/admin` — System administrator control center (KYC verification, payout reconciliation)
+- `/enterprise/admin` — Enterprise workspace (compliance playbooks, member quotas, encrypted vault)
+- `/lawyer/pending` — Certified advocate HITL queue and digital review sign-off portal
+- `/docs` — Live interactive whitepaper and system architecture explorer

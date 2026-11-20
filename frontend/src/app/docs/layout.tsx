@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
-import { Fraunces, Karla } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./../globals.css";
 
-const fraunces = Fraunces({
+const fraunces = Poppins({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-fraunces",
   display: "swap",
 });
 
-const karla = Karla({
+const karla = Poppins({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-karla",
   display: "swap",
 });
@@ -25,10 +27,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${karla.variable}`}>
-      <body className="bg-[#FBF4EC] text-[#5C4F43] font-sans antialiased selection:bg-[#F6E2D7] selection:text-[#2E2117]">
-        {children}
-      </body>
-    </html>
+    <div
+      className={`${fraunces.variable} ${karla.variable} bg-[#0e0e0e] text-[#a3a3a3] font-sans antialiased selection:bg-[#1f1f1f] selection:text-[#ffffff]`}
+      style={{ minHeight: "100vh" }}
+    >
+      {children}
+    </div>
   );
 }

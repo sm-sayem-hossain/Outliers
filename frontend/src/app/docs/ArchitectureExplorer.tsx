@@ -18,10 +18,10 @@ const SYSTEM_ICON_MAP = {
 };
 
 const SYSTEM_THEME_MAP = {
-  chat: { color: "#C45B3C", bg: "#FDF2EE", border: "rgba(196, 91, 60, 0.25)" },
-  contract: { color: "#B45309", bg: "#FEF7EE", border: "rgba(180, 83, 9, 0.25)" },
-  lawyer: { color: "#1E5C40", bg: "#EEF7F2", border: "rgba(30, 92, 64, 0.25)" },
-  mcp: { color: "#D97706", bg: "#FFFBEB", border: "rgba(217, 119, 6, 0.25)" },
+  chat: { color: "#d4d4d4", bg: "transparent", border: "transparent" },
+  contract: { color: "#d4d4d4", bg: "transparent", border: "transparent" },
+  lawyer: { color: "#d4d4d4", bg: "transparent", border: "transparent" },
+  mcp: { color: "#d4d4d4", bg: "transparent", border: "transparent" },
 };
 
 interface ArchitectureExplorerProps {
@@ -196,7 +196,7 @@ export default function ArchitectureExplorer({
       <div className="svg-canvas-container" style={{ width: "100%", overflow: "hidden" }}>
         <svg
           ref={svgRef}
-          viewBox="0 0 1060 250"
+          viewBox={`0 0 1060 ${Math.ceil(activeSystem.nodes.length / 2) * 260 + 74}`}
           className="arch-svg-canvas"
           style={{ width: "100%", height: "auto", display: "block" }}
           preserveAspectRatio="xMidYMid meet"
@@ -212,7 +212,7 @@ export default function ArchitectureExplorer({
                 markerHeight="6"
                 orient="auto-start-reverse"
               >
-                <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#C45B3C" />
+                <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#d4d4d4" />
               </marker>
 
               {/* Arrow Marker: Emerald Return Stream */}
@@ -225,7 +225,7 @@ export default function ArchitectureExplorer({
                 markerHeight="6"
                 orient="auto-start-reverse"
               >
-                <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#1E5C40" />
+                <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#d4d4d4" />
               </marker>
 
               {/* Arrow Marker: Fallback/Tool Gold */}
@@ -238,65 +238,30 @@ export default function ArchitectureExplorer({
                 markerHeight="6"
                 orient="auto-start-reverse"
               >
-                <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#8F5A0A" />
+                <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#8a8a8a" />
               </marker>
 
               {/* Node Card Gradient */}
               <linearGradient id="nodeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#FFFFFF" />
-                <stop offset="100%" stopColor="#FFFDF9" />
+                <stop offset="0%" stopColor="#1f2937" />
+                <stop offset="100%" stopColor="#0e0e0e" />
               </linearGradient>
 
               {/* Selected Node Glow */}
               <filter id="nodeGlow" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="0" dy="6" stdDeviation="6" floodColor="#C45B3C" floodOpacity="0.25" />
+                <feDropShadow dx="0" dy="6" stdDeviation="6" floodColor="#d4d4d4" floodOpacity="0.25" />
               </filter>
             </defs>
 
-            {/* ── RENDER SYSTEM SPECIFIC TOPOLOGY ── */}
-            {activeSystemId === "chat" && (
-              <ChatTopology
-                nodes={activeSystem.nodes}
-                selectedNodeId={selectedNodeId}
-                hoveredNodeId={hoveredNodeId}
-                animateFlow={animateFlow}
-                onSelectNode={setSelectedNodeId}
-                onHoverNode={setHoveredNodeId}
-              />
-            )}
-
-            {activeSystemId === "contract" && (
-              <ContractTopology
-                nodes={activeSystem.nodes}
-                selectedNodeId={selectedNodeId}
-                hoveredNodeId={hoveredNodeId}
-                animateFlow={animateFlow}
-                onSelectNode={setSelectedNodeId}
-                onHoverNode={setHoveredNodeId}
-              />
-            )}
-
-            {activeSystemId === "lawyer" && (
-              <LawyerTopology
-                nodes={activeSystem.nodes}
-                selectedNodeId={selectedNodeId}
-                hoveredNodeId={hoveredNodeId}
-                animateFlow={animateFlow}
-                onSelectNode={setSelectedNodeId}
-                onHoverNode={setHoveredNodeId}
-              />
-            )}
-
-            {activeSystemId === "mcp" && (
-              <McpTopology
-                nodes={activeSystem.nodes}
-                selectedNodeId={selectedNodeId}
-                hoveredNodeId={hoveredNodeId}
-                animateFlow={animateFlow}
-                onSelectNode={setSelectedNodeId}
-                onHoverNode={setHoveredNodeId}
-              />
-            )}
+            {/* ── RENDER SYSTEM TOPOLOGY (readable snake grid) ── */}
+            {renderTopology(activeSystemId, {
+              nodes: activeSystem.nodes,
+              selectedNodeId,
+              hoveredNodeId,
+              animateFlow,
+              onSelectNode: setSelectedNodeId,
+              onHoverNode: setHoveredNodeId,
+            })}
           </svg>
       </div>
 
@@ -307,18 +272,18 @@ export default function ArchitectureExplorer({
         .arch-master-wrapper {
           margin-top: 1.5rem;
           margin-bottom: 2.5rem;
-          border: 1px solid #ecdfd0;
-          border-radius: 14px;
-          background: #fbf4ec;
-          box-shadow: 0 6px 24px rgba(46, 33, 23, 0.04);
+          border: 1px solid #2e2e2e;
+          border-radius: 12px;
+          background: #0e0e0e;
+          box-shadow: none;
           overflow: hidden;
           font-family: inherit;
         }
 
         /* 1. Selector Bar */
         .arch-flow-selector-bar {
-          background: #fffdf9;
-          border-bottom: 1px solid #ecdfd0;
+          background: #0e0e0e;
+          border-bottom: 1px solid #0e0e0e;
           padding: 1.25rem 1.75rem;
           display: flex;
           flex-direction: column;
@@ -334,12 +299,12 @@ export default function ArchitectureExplorer({
           font-size: 0.72rem;
           font-weight: 800;
           letter-spacing: 0.1em;
-          color: #c45b3c;
+          color: #d4d4d4;
           text-transform: uppercase;
         }
         .arch-selector-subtitle {
           font-size: 0.88rem;
-          color: #786b60;
+          color: #8a8a8a;
         }
         .arch-flow-pills {
           display: grid;
@@ -357,9 +322,9 @@ export default function ArchitectureExplorer({
           }
         }
         .arch-flow-pill {
-          background: #fbf4ec;
-          border: 1.5px solid #eadbcc;
-          border-radius: 10px;
+          background: #0e0e0e;
+          border: 1.5px solid #333333;
+          border-radius: 0;
           padding: 0.9rem 1.1rem;
           cursor: pointer;
           display: flex;
@@ -371,15 +336,15 @@ export default function ArchitectureExplorer({
           transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .arch-flow-pill:hover {
-          border-color: #c45b3c;
-          background: #ffffff;
+          border-color: #d4d4d4;
+          background: #0e0e0e;
           transform: translateY(-1.5px);
-          box-shadow: 0 6px 16px rgba(46, 33, 23, 0.06);
+          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
         }
         .arch-flow-pill.active {
-          background: #ffffff;
-          border-color: #c45b3c;
-          box-shadow: 0 6px 20px rgba(196, 91, 60, 0.12), 0 2px 4px rgba(46, 33, 23, 0.04);
+          background: #0e0e0e;
+          border-color: #d4d4d4;
+          box-shadow: 0 6px 20px rgba(255, 255, 255, 0.12), 0 2px 4px rgba(0, 0, 0, 0.4);
         }
         .pill-icon-badge {
           width: 38px;
@@ -399,24 +364,24 @@ export default function ArchitectureExplorer({
           min-width: 0;
         }
         .pill-title {
-          font-family: var(--font-fraunces), serif;
+          font-family: var(--font-fraunces), sans-serif;
           font-size: 0.96rem;
           font-weight: 700;
-          color: #2e2117;
+          color: #ffffff;
           line-height: 1.25;
           letter-spacing: -0.01em;
           display: block;
         }
         .arch-flow-pill.active .pill-title {
-          color: #c45b3c;
+          color: #d4d4d4;
         }
         .pill-version {
           font-size: 0.68rem;
           font-family: monospace;
-          background: #f0e6da;
+          background: #0e0e0e;
           padding: 0.2rem 0.5rem;
           border-radius: 5px;
-          color: #5c4f43;
+          color: #a3a3a3;
           font-weight: 700;
           flex-shrink: 0;
           letter-spacing: 0.02em;
@@ -425,8 +390,8 @@ export default function ArchitectureExplorer({
           width: 8px;
           height: 8px;
           border-radius: 50%;
-          background: #1e5c40;
-          box-shadow: 0 0 0 2.5px rgba(30, 92, 64, 0.25);
+          background: #d4d4d4;
+          box-shadow: none;
           position: absolute;
           top: 9px;
           right: 9px;
@@ -437,7 +402,7 @@ export default function ArchitectureExplorer({
           justify-content: center;
           width: 34px;
           height: 34px;
-          border-radius: 8px;
+          border-radius: 0;
           border: 1px solid transparent;
           margin-right: 0.6rem;
           vertical-align: middle;
@@ -446,8 +411,8 @@ export default function ArchitectureExplorer({
         /* 2. Telemetry Card */
         .arch-telemetry-card {
           padding: 1.5rem 1.75rem;
-          background: #fffdf9;
-          border-bottom: 1px solid #ecdfd0;
+          background: #0e0e0e;
+          border-bottom: 1px solid #0e0e0e;
         }
         .arch-telemetry-header {
           display: flex;
@@ -471,30 +436,30 @@ export default function ArchitectureExplorer({
           border-radius: 4px;
         }
         .arch-pill-tag.brand {
-          background: rgba(196, 91, 60, 0.1);
-          color: #c45b3c;
+          background: rgba(255, 255, 255, 0.1);
+          color: #d4d4d4;
         }
         .arch-pill-tag.pattern {
-          background: #ecdfd0;
-          color: #5c4f43;
+          background: #0e0e0e;
+          color: #a3a3a3;
         }
         .arch-system-title {
-          font-family: var(--font-fraunces), serif;
+          font-family: var(--font-fraunces), sans-serif;
           font-size: 1.4rem;
-          color: #2e2117;
+          color: #ffffff;
           margin: 0 0 0.35rem 0;
           font-weight: 700;
         }
         .arch-system-tagline {
           font-size: 0.9rem;
-          color: #5c4f43;
+          color: #a3a3a3;
           margin: 0;
           max-width: 650px;
           line-height: 1.45;
         }
         .arch-endpoint-box {
-          background: #fbf4ec;
-          border: 1px solid #ecdfd0;
+          background: #0e0e0e;
+          border: 1px solid #2e2e2e;
           border-radius: 6px;
           padding: 0.5rem 0.85rem;
           display: flex;
@@ -505,27 +470,27 @@ export default function ArchitectureExplorer({
           font-size: 0.68rem;
           font-weight: 800;
           letter-spacing: 0.08em;
-          color: #786b60;
+          color: #8a8a8a;
         }
         .arch-endpoint-code {
           font-family: monospace;
           font-size: 0.82rem;
           font-weight: 700;
-          color: #c45b3c;
+          color: #d4d4d4;
         }
         .arch-copy-btn {
-          background: #ffffff;
-          border: 1px solid #ecdfd0;
+          background: #0e0e0e;
+          border: 1px solid #2e2e2e;
           padding: 0.2rem 0.55rem;
           border-radius: 4px;
           font-size: 0.72rem;
           font-weight: 700;
-          color: #2e2117;
+          color: #ffffff;
           cursor: pointer;
         }
         .arch-copy-btn:hover {
-          border-color: #c45b3c;
-          color: #c45b3c;
+          border-color: #d4d4d4;
+          color: #d4d4d4;
         }
 
         .arch-metric-tiles-grid {
@@ -545,9 +510,9 @@ export default function ArchitectureExplorer({
           }
         }
         .arch-metric-tile {
-          background: #fbf4ec;
-          border: 1px solid #ecdfd0;
-          border-radius: 8px;
+          background: #0e0e0e;
+          border: 1px solid #2e2e2e;
+          border-radius: 0;
           padding: 0.85rem 1rem;
           display: flex;
           flex-direction: column;
@@ -557,28 +522,28 @@ export default function ArchitectureExplorer({
           font-size: 0.65rem;
           font-weight: 800;
           letter-spacing: 0.08em;
-          color: #786b60;
+          color: #8a8a8a;
         }
         .tile-value {
-          font-family: var(--font-fraunces), serif;
+          font-family: var(--font-fraunces), sans-serif;
           font-size: 1.15rem;
           font-weight: 700;
-          color: #2e2117;
+          color: #ffffff;
           line-height: 1.25;
         }
         .tile-value.highlight {
-          color: #1e5c40;
+          color: #ffffff;
           font-size: 1rem;
         }
         .tile-hint {
           font-size: 0.72rem;
-          color: #786b60;
+          color: #8a8a8a;
         }
 
         /* 3. Canvas Toolbar */
         .arch-canvas-toolbar {
-          background: #fbf4ec;
-          border-bottom: 1px solid #ecdfd0;
+          background: #0e0e0e;
+          border-bottom: 1px solid #0e0e0e;
           padding: 0.75rem 1.75rem;
           display: flex;
           justify-content: space-between;
@@ -599,9 +564,9 @@ export default function ArchitectureExplorer({
           font-size: 0.68rem;
           font-weight: 800;
           letter-spacing: 0.08em;
-          color: #2e2117;
-          background: #fffdf9;
-          border: 1px solid #ecdfd0;
+          color: #ffffff;
+          background: #0e0e0e;
+          border: 1px solid #2e2e2e;
           padding: 0.25rem 0.6rem;
           border-radius: 50px;
         }
@@ -609,12 +574,12 @@ export default function ArchitectureExplorer({
           width: 7px;
           height: 7px;
           border-radius: 50%;
-          background: #1e5c40;
-          box-shadow: 0 0 0 2px rgba(30, 92, 64, 0.2);
+          background: #d4d4d4;
+          box-shadow: none;
         }
         .canvas-help-text {
           font-size: 0.78rem;
-          color: #786b60;
+          color: #8a8a8a;
           font-style: italic;
         }
         .toolbar-actions {
@@ -626,19 +591,19 @@ export default function ArchitectureExplorer({
         .zoom-btn-group {
           display: flex;
           align-items: center;
-          background: #ffffff;
-          border: 1px solid #ecdfd0;
+          background: #0e0e0e;
+          border: 1px solid #2e2e2e;
           border-radius: 6px;
           overflow: hidden;
         }
         .tb-btn {
-          background: #ffffff;
-          border: 1px solid #ecdfd0;
+          background: #0e0e0e;
+          border: 1px solid #2e2e2e;
           padding: 0.35rem 0.75rem;
           border-radius: 6px;
           font-size: 0.75rem;
           font-weight: 700;
-          color: #2e2117;
+          color: #ffffff;
           cursor: pointer;
           font-family: inherit;
           transition: all 0.15s ease;
@@ -651,20 +616,20 @@ export default function ArchitectureExplorer({
         .zoom-label {
           font-size: 0.72rem;
           font-weight: 700;
-          color: #5c4f43;
+          color: #a3a3a3;
           padding: 0 0.4rem;
           min-width: 44px;
           text-align: center;
         }
         .tb-btn:hover {
-          background: #fbf4ec;
-          border-color: #c45b3c;
-          color: #c45b3c;
+          background: #0e0e0e;
+          border-color: #d4d4d4;
+          color: #d4d4d4;
         }
         .tb-btn.toggle-btn.active {
-          background: rgba(196, 91, 60, 0.1);
-          color: #c45b3c;
-          border-color: #c45b3c;
+          background: rgba(255, 255, 255, 0.1);
+          color: #d4d4d4;
+          border-color: #d4d4d4;
         }
         .tb-btn.small {
           padding: 0.25rem 0.55rem;
@@ -673,11 +638,13 @@ export default function ArchitectureExplorer({
 
         /* 4. Canvas Container */
         .svg-canvas-container {
-          background: #fbf4ec;
+          background: #0e0e0e;
           padding: 1.25rem 1.5rem;
           position: relative;
           width: 100%;
-          overflow: hidden;
+          overflow-x: auto;
+          overflow-y: hidden;
+          -webkit-overflow-scrolling: touch;
         }
         .svg-zoom-wrapper {
           width: 100%;
@@ -686,6 +653,7 @@ export default function ArchitectureExplorer({
         .arch-svg-canvas {
           background: transparent;
           width: 100%;
+          min-width: 860px;
           height: auto;
           display: block;
         }
@@ -693,11 +661,11 @@ export default function ArchitectureExplorer({
         /* 5. Node Inspector */
         .arch-node-inspector-card {
           margin: 1.5rem 1.75rem;
-          background: #ffffff;
-          border: 1px solid #c45b3c;
-          border-radius: 10px;
+          background: #0e0e0e;
+          border: 1px solid #d4d4d4;
+          border-radius: 0;
           padding: 1.5rem;
-          box-shadow: 0 6px 20px rgba(196, 91, 60, 0.08);
+          box-shadow: 0 6px 20px rgba(255, 255, 255, 0.08);
           animation: slideDown 0.25s ease-out;
         }
         @keyframes slideDown {
@@ -727,15 +695,15 @@ export default function ArchitectureExplorer({
           font-weight: 800;
           letter-spacing: 0.08em;
           text-transform: uppercase;
-          background: #fbf4ec;
-          color: #c45b3c;
+          background: #0e0e0e;
+          color: #d4d4d4;
           padding: 0.2rem 0.5rem;
           border-radius: 4px;
         }
         .inspector-name {
-          font-family: var(--font-fraunces), serif;
+          font-family: var(--font-fraunces), sans-serif;
           font-size: 1.25rem;
-          color: #2e2117;
+          color: #ffffff;
           margin: 0;
           font-weight: 700;
         }
@@ -747,30 +715,30 @@ export default function ArchitectureExplorer({
           border-radius: 4px;
         }
         .status-badge.live {
-          background: #e2f0e9;
-          color: #1e5c40;
+          background: rgba(74, 222, 128, 0.1);
+          color: rgba(74, 222, 128, 0.7);
         }
         .status-badge.beta {
-          background: #fdf3e1;
-          color: #8f5a0a;
+          background: rgba(251, 191, 36, 0.1);
+          color: rgba(251, 191, 36, 0.7);
         }
         .inspector-close-btn {
           background: none;
-          border: 1px solid #ecdfd0;
+          border: 1px solid #2e2e2e;
           border-radius: 4px;
           padding: 0.25rem 0.65rem;
           font-size: 0.75rem;
           font-weight: 700;
-          color: #786b60;
+          color: #8a8a8a;
           cursor: pointer;
         }
         .inspector-close-btn:hover {
-          color: #c45b3c;
-          border-color: #c45b3c;
+          color: #d4d4d4;
+          border-color: #d4d4d4;
         }
         .inspector-desc {
           font-size: 0.92rem;
-          color: #5c4f43;
+          color: #a3a3a3;
           line-height: 1.5;
           margin: 0 0 1.25rem 0;
         }
@@ -786,29 +754,29 @@ export default function ArchitectureExplorer({
           }
         }
         .inspector-box {
-          background: #fbf4ec;
-          border: 1px solid #ecdfd0;
-          border-radius: 8px;
+          background: #0e0e0e;
+          border: 1px solid #2e2e2e;
+          border-radius: 0;
           padding: 0.85rem 1rem;
         }
         .box-title {
           font-size: 0.68rem;
           font-weight: 800;
           letter-spacing: 0.08em;
-          color: #c45b3c;
+          color: #d4d4d4;
           text-transform: uppercase;
           display: block;
           margin-bottom: 0.4rem;
         }
         .box-text {
           font-size: 0.85rem;
-          color: #2e2117;
+          color: #ffffff;
           margin: 0;
           line-height: 1.45;
         }
         .box-text.code-val {
           font-family: monospace;
-          color: #243e56;
+          color: #1b2430;
           font-weight: 600;
         }
         .box-list {
@@ -821,16 +789,16 @@ export default function ArchitectureExplorer({
         }
         .box-list li {
           font-size: 0.82rem;
-          color: #5c4f43;
+          color: #a3a3a3;
           display: flex;
           gap: 0.4rem;
         }
         .box-list li::before {
           content: "•";
-          color: #c45b3c;
+          color: #d4d4d4;
         }
         .inspector-footer {
-          border-top: 1px dashed #ecdfd0;
+          border-top: 1px dashed #0e0e0e;
           padding-top: 1rem;
           display: flex;
           flex-direction: column;
@@ -846,24 +814,24 @@ export default function ArchitectureExplorer({
           font-size: 0.7rem;
           font-weight: 800;
           letter-spacing: 0.08em;
-          color: #786b60;
+          color: #8a8a8a;
         }
         .ref-path {
           font-family: monospace;
           font-size: 0.82rem;
-          color: #c45b3c;
+          color: #d4d4d4;
           font-weight: 700;
-          background: #fbf4ec;
+          background: #0e0e0e;
           padding: 0.15rem 0.5rem;
           border-radius: 4px;
         }
         .snippet-wrap {
-          border: 1px solid #ecdfd0;
+          border: 1px solid #2e2e2e;
           border-radius: 6px;
           overflow: hidden;
         }
         .snippet-bar {
-          background: #2e2117;
+          background: #0e0e0e;
           padding: 0.4rem 0.85rem;
           display: flex;
           justify-content: space-between;
@@ -873,7 +841,7 @@ export default function ArchitectureExplorer({
           font-size: 0.68rem;
           font-weight: 800;
           letter-spacing: 0.08em;
-          color: #ecdfd0;
+          color: #8a8a8a;
           text-transform: uppercase;
         }
         .snippet-copy-btn {
@@ -886,11 +854,11 @@ export default function ArchitectureExplorer({
           cursor: pointer;
         }
         .snippet-copy-btn:hover {
-          background: #c45b3c;
+          background: #d4d4d4;
         }
         .arch-code-block {
           background: #1a1a1a;
-          color: #f5eedf;
+          color: #d4d4d4;
           padding: 0.85rem 1rem;
           margin: 0;
           font-family: monospace;
@@ -902,8 +870,8 @@ export default function ArchitectureExplorer({
         /* 6. Execution Timeline */
         .arch-timeline-container {
           padding: 1.75rem;
-          background: #fffdf9;
-          border-top: 1px solid #ecdfd0;
+          background: #0e0e0e;
+          border-top: 1px solid #0e0e0e;
         }
         .timeline-header-bar {
           display: flex;
@@ -913,18 +881,18 @@ export default function ArchitectureExplorer({
           flex-wrap: wrap;
           margin-bottom: 1.75rem;
           padding-bottom: 1.25rem;
-          border-bottom: 1px solid #ecdfd0;
+          border-bottom: 1px solid #0e0e0e;
         }
         .timeline-section-title {
-          font-family: var(--font-fraunces), serif;
+          font-family: var(--font-fraunces), sans-serif;
           font-size: 1.3rem;
-          color: #2e2117;
+          color: #ffffff;
           margin: 0 0 0.35rem 0;
           font-weight: 700;
         }
         .timeline-section-sub {
           font-size: 0.88rem;
-          color: #786b60;
+          color: #8a8a8a;
           margin: 0;
         }
         .timeline-header-controls {
@@ -937,19 +905,19 @@ export default function ArchitectureExplorer({
           display: flex;
           align-items: center;
           gap: 0.4rem;
-          background: #fbf4ec;
-          border: 1px solid #ecdfd0;
+          background: #0e0e0e;
+          border: 1px solid #2e2e2e;
           border-radius: 6px;
           padding: 0.2rem 0.4rem;
         }
         .step-nav-btn {
-          background: #ffffff;
-          border: 1px solid #ecdfd0;
+          background: #0e0e0e;
+          border: 1px solid #2e2e2e;
           padding: 0.25rem 0.6rem;
           border-radius: 4px;
           font-size: 0.75rem;
           font-weight: 700;
-          color: #2e2117;
+          color: #ffffff;
           cursor: pointer;
         }
         .step-nav-btn:disabled {
@@ -959,7 +927,7 @@ export default function ArchitectureExplorer({
         .step-stepper-label {
           font-size: 0.78rem;
           font-weight: 700;
-          color: #5c4f43;
+          color: #a3a3a3;
           padding: 0 0.4rem;
         }
         .timeline-track {
@@ -970,22 +938,22 @@ export default function ArchitectureExplorer({
         .timeline-step-card {
           display: flex;
           gap: 1.25rem;
-          background: #ffffff;
-          border: 1px solid #ecdfd0;
-          border-radius: 10px;
+          background: #0e0e0e;
+          border: 1px solid #2e2e2e;
+          border-radius: 0;
           padding: 1rem 1.4rem;
           transition: all 0.2s ease;
           cursor: pointer;
         }
         .timeline-step-card:hover {
-          border-color: #c45b3c;
-          box-shadow: 0 4px 14px rgba(196, 91, 60, 0.06);
-          background: #fffdf9;
+          border-color: #d4d4d4;
+          box-shadow: 0 4px 14px rgba(255, 255, 255, 0.06);
+          background: #0e0e0e;
         }
         .timeline-step-card.active {
-          border-color: #c45b3c;
-          box-shadow: 0 4px 16px rgba(196, 91, 60, 0.12);
-          background: #fffdf9;
+          border-color: #d4d4d4;
+          box-shadow: 0 4px 16px rgba(255, 255, 255, 0.12);
+          background: #0e0e0e;
         }
         .timeline-guide-rail {
           display: flex;
@@ -998,8 +966,8 @@ export default function ArchitectureExplorer({
           width: 30px;
           height: 30px;
           border-radius: 50%;
-          background: #ecdfd0;
-          color: #5c4f43;
+          background: #0e0e0e;
+          color: #a3a3a3;
           font-size: 0.75rem;
           font-weight: 800;
           display: flex;
@@ -1008,14 +976,14 @@ export default function ArchitectureExplorer({
           transition: all 0.2s ease;
         }
         .timeline-dot.active-dot {
-          background: #c45b3c;
-          color: #ffffff;
-          box-shadow: 0 0 0 3px rgba(196, 91, 60, 0.2);
+          background: #d4d4d4;
+          color: #0e0e0e;
+          box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
         }
         .timeline-line {
           width: 2px;
           flex-grow: 1;
-          background: #ecdfd0;
+          background: #0e0e0e;
           margin-top: 0.4rem;
         }
         .timeline-body-wrap {
@@ -1039,48 +1007,48 @@ export default function ArchitectureExplorer({
           font-weight: 800;
           letter-spacing: 0.08em;
           text-transform: uppercase;
-          background: rgba(196, 91, 60, 0.1);
-          color: #c45b3c;
+          background: rgba(255, 255, 255, 0.1);
+          color: #d4d4d4;
           padding: 0.15rem 0.5rem;
           border-radius: 4px;
         }
         .step-component-tag {
           font-size: 0.68rem;
           font-weight: 700;
-          color: #243e56;
-          background: #eef4fa;
+          color: #1b2430;
+          background: #151a22;
           padding: 0.15rem 0.5rem;
           border-radius: 4px;
         }
         .step-module-tag {
           font-family: monospace;
           font-size: 0.72rem;
-          color: #786b60;
+          color: #8a8a8a;
         }
         .step-operation-title {
-          font-family: var(--font-fraunces), serif;
+          font-family: var(--font-fraunces), sans-serif;
           font-size: 1.08rem;
-          color: #2e2117;
+          color: #ffffff;
           margin: 0 0 0.35rem 0;
           font-weight: 700;
           line-height: 1.35;
         }
         .step-main-work {
           font-size: 0.85rem;
-          color: #5c4f43;
+          color: #a3a3a3;
           margin: 0 0 0.35rem 0;
           line-height: 1.45;
         }
         .main-work-label {
           font-weight: 700;
-          color: #2e2117;
+          color: #ffffff;
         }
         .step-guard-line {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          background: #fbf4ec;
-          border-left: 3px solid #1e5c40;
+          background: #0e0e0e;
+          border-left: 3px solid #2e2e2e;
           padding: 0.35rem 0.65rem;
           border-radius: 0 4px 4px 0;
           margin-top: 0.3rem;
@@ -1088,12 +1056,12 @@ export default function ArchitectureExplorer({
         .guard-shield-badge {
           font-size: 0.68rem;
           font-weight: 800;
-          color: #1e5c40;
+          color: #a3a3a3;
           white-space: nowrap;
         }
         .guard-desc-text {
           font-size: 0.78rem;
-          color: #4a3b32;
+          color: #8a8a8a;
           line-height: 1.35;
         }
       `}</style>
@@ -1115,503 +1083,169 @@ interface TopologyProps {
 }
 
 // ── 1. BILINGUAL COPILOT CHAT TOPOLOGY (6 Nodes) ──
-function ChatTopology({
+// ── SHARED SNAKE-GRID TOPOLOGY (readable, mobile-scrollable) ──
+interface TopologyData {
+  nodes: ArchitectureNode[];
+  selectedNodeId: string | null;
+  hoveredNodeId: string | null;
+  animateFlow: boolean;
+  onSelectNode: (id: string) => void;
+  onHoverNode: (id: string | null) => void;
+  connectorLabels: string[];
+  returnTitle: string;
+  returnSub: string;
+}
+
+function TopologyGrid({
   nodes,
   selectedNodeId,
   hoveredNodeId,
   animateFlow,
   onSelectNode,
   onHoverNode,
-}: TopologyProps) {
-  const nodeWidth = 142;
-  const nodeHeight = 138;
-  const startY = 38;
-  const gap = 28;
+  connectorLabels,
+  returnTitle,
+  returnSub,
+}: TopologyData) {
+  const perRow = 2;
+  const nodeWidth = 460;
+  const nodeHeight = 190;
+  const gapX = 40;
+  const gapY = 70;
+  const startX = 30;
+  const startY = 34;
+  const rows = Math.ceil(nodes.length / perRow);
+  const rowY = (r: number) => startY + r * (nodeHeight + gapY);
+  const lastBottom = rowY(rows - 1) + nodeHeight;
+  const badgeY = lastBottom + 40;
+  const badgeW = 960;
+  const badgeX = startX;
 
-  const positions = [
-    { x: 20, y: startY },
-    { x: 20 + (nodeWidth + gap), y: startY },
-    { x: 20 + (nodeWidth + gap) * 2, y: startY },
-    { x: 20 + (nodeWidth + gap) * 3, y: startY },
-    { x: 20 + (nodeWidth + gap) * 4, y: startY },
-    { x: 20 + (nodeWidth + gap) * 5, y: startY },
-  ];
+  // Snake positions: even rows L->R, odd rows R->L
+  const positions = nodes.map((_, idx) => {
+    const r = Math.floor(idx / perRow);
+    const c = idx % perRow;
+    const col = r % 2 === 0 ? c : perRow - 1 - c;
+    return { x: startX + col * (nodeWidth + gapX), y: rowY(r), r, col };
+  });
+
+  const midOf = (idx: number) => positions[idx].y + nodeHeight / 2;
 
   return (
     <g>
-      {/* Primary Connectors (Between consecutive nodes) */}
-      {positions.slice(0, 5).map((pos, idx) => {
-        const fromX = pos.x + nodeWidth;
-        const toX = positions[idx + 1].x;
-        const midY = startY + nodeHeight / 2;
-        const labels = [
-          "HTTPS / POST",
-          "qa_graph.ainvoke",
-          "hybrid_retriever",
-          "Groq LLaMA 70B",
-          "Gazette Verify",
-        ];
-        return (
-          <g key={idx}>
-            <path
-              d={`M ${fromX} ${midY} L ${toX - 2} ${midY}`}
-              stroke="#C45B3C"
-              strokeWidth="2"
-              fill="none"
-              markerEnd="url(#arch-arrow)"
-              strokeDasharray={animateFlow ? "6 3" : "none"}
-              className={animateFlow ? "arch-flowing-path" : ""}
-            />
-            <text
-              x={(fromX + toX) / 2}
-              y={midY - 7}
-              textAnchor="middle"
-              fill="#C45B3C"
-              fontSize="7.5"
-              fontWeight="800"
-            >
-              {labels[idx]}
-            </text>
-          </g>
-        );
-      })}
-
-      {/* Return Stream: Arc from Node 5 back to Node 0 */}
-      <path
-        d={`M ${positions[5].x + nodeWidth / 2} ${startY + nodeHeight} C ${
-          positions[5].x + nodeWidth / 2
-        } 220, ${positions[0].x + nodeWidth / 2} 220, ${positions[0].x + nodeWidth / 2} ${
-          startY + nodeHeight + 8
-        }`}
-        stroke="#1E5C40"
-        strokeWidth="2.2"
-        strokeDasharray={animateFlow ? "6 4" : "none"}
-        fill="none"
-        markerEnd="url(#arch-return-arrow)"
-        className={animateFlow ? "arch-return-flowing" : ""}
-      />
-
-      {/* Return Stream Badge in the Center */}
-      <g transform="translate(200, 202)">
-        <rect
-          width="660"
-          height="32"
-          rx="6"
-          fill="#FFFDF9"
-          stroke="#1E5C40"
-          strokeWidth="1.2"
-          filter="drop-shadow(0 2px 6px rgba(30,92,64,0.08))"
-        />
-        <text x="330" y="15" textAnchor="middle" fill="#1E5C40" fontSize="9" fontWeight="800">
-          RETURN STREAM: Verified Statutory Citations & Gazette Links via SSE Token Stream
+      {/* Return stream badge */}
+      <g transform={`translate(${badgeX}, ${badgeY})`}>
+        <rect width={badgeW} height="46" rx="0" fill="#0e0e0e" stroke="#2e2e2e" strokeWidth="1.2" />
+        <text x={badgeW / 2} y="19" textAnchor="middle" fill="#d4d4d4" fontSize="12.5" fontWeight="800">
+          {returnTitle}
         </text>
-        <text x="330" y="26" textAnchor="middle" fill="#786B60" fontSize="7.8">
-          100% Anti-Hallucination Grounding • Precedents from bdlaws.minlaw.gov.bd
+        <text x={badgeW / 2} y="35" textAnchor="middle" fill="#8a8a8a" fontSize="10.5">
+          {returnSub}
         </text>
       </g>
 
-      {/* Render 6 Nodes */}
-      {nodes.map((node, idx) => {
-        const pos = positions[idx] || { x: 0, y: 0 };
-        const isSelected = selectedNodeId === node.id;
-        const isHovered = hoveredNodeId === node.id;
 
+      {nodes.map((node, idx) => {
+        const pos = positions[idx];
         return (
           <SvgNodeCard
             key={node.id}
             node={node}
+            idx={idx}
             x={pos.x}
             y={pos.y}
             width={nodeWidth}
             height={nodeHeight}
-            isSelected={isSelected}
-            isHovered={isHovered}
-            accentColor={
-              idx === 0 ? "#1E5C40" : idx === 1 ? "#C45B3C" : idx === 4 ? "#8F5A0A" : "#243E56"
-            }
+            isSelected={selectedNodeId === node.id}
+            isHovered={hoveredNodeId === node.id}
+            accentColor="#d4d4d4"
             onClick={() => onSelectNode(node.id)}
             onMouseEnter={() => onHoverNode(node.id)}
             onMouseLeave={() => onHoverNode(null)}
           />
         );
       })}
+
+      {/* Connectors in flow order */}
+      {nodes.slice(0, -1).map((_, idx) => {
+        const a = positions[idx];
+        const b = positions[idx + 1];
+        const label = connectorLabels[idx] || "";
+        let d = "";
+        let lx = 0;
+        let ly = 0;
+        if (a.r === b.r) {
+          // horizontal within row
+          if (b.x > a.x) {
+            d = `M ${a.x + nodeWidth} ${midOf(idx)} L ${b.x - 4} ${midOf(idx)}`;
+            lx = (a.x + nodeWidth + b.x) / 2;
+          } else {
+            d = `M ${a.x} ${midOf(idx)} L ${b.x + nodeWidth + 4} ${midOf(idx)}`;
+            lx = (a.x + b.x + nodeWidth) / 2;
+          }
+          ly = midOf(idx) - 12;
+        } else {
+          // vertical drop between rows
+          const cx = a.x + nodeWidth / 2;
+          d = `M ${cx} ${a.y + nodeHeight} L ${cx} ${b.y - 6}`;
+          lx = cx + 14;
+          ly = (a.y + nodeHeight + b.y) / 2 + 4;
+        }
+        const showLabel = a.r !== b.r;
+        return (
+          <g key={idx}>
+            <path
+              d={d}
+              stroke="#d4d4d4"
+              strokeWidth="2"
+              fill="none"
+              markerEnd="url(#arch-arrow)"
+              strokeDasharray={animateFlow ? "6 3" : "none"}
+              className={animateFlow ? "arch-flowing-path" : ""}
+            />
+            {showLabel && (
+              <text x={lx} y={ly} textAnchor="start" fill="#8a8a8a" fontSize="11.5" fontWeight="700">
+                {label}
+              </text>
+            )}
+          </g>
+        );
+      })}
+
     </g>
   );
 }
 
-// ── 2. CONTRACT AUDIT PIPELINE TOPOLOGY (7 Nodes) ──
-function ContractTopology({
-  nodes,
-  selectedNodeId,
-  hoveredNodeId,
-  animateFlow,
-  onSelectNode,
-  onHoverNode,
-}: TopologyProps) {
-  const nodeWidth = 124;
-  const nodeHeight = 138;
-  const startY = 38;
-  const gap = 20;
+// ── TOPOLOGY FLOW DATA (connector labels + return stream copy) ──
+const TOPOLOGY_FLOWS = {
+  chat: {
+    connectorLabels: ["HTTPS / POST", "qa_graph.ainvoke", "hybrid_retriever", "Groq LLaMA 70B", "Gazette Verify"],
+    returnTitle: "RETURN STREAM: Verified Statutory Citations & Gazette Links via SSE Token Stream",
+    returnSub: "100% Anti-Hallucination Grounding • Precedents from bdlaws.minlaw.gov.bd",
+  },
+  contract: {
+    connectorLabels: ["Upload Stream", "AST Parsing", "Missing Checks", "LLaMA 70B Scorer", "Statutory Match", "DOCX Memo Stream"],
+    returnTitle: "RETURN STREAM: 30-Second Audit Memo · Severity Ranked Findings · DOCX Redlines",
+    returnSub: "Executive Health Score (0-100) • Mandatory Statutory Compliance Validation",
+  },
+  lawyer: {
+    connectorLabels: ["POST /inquiries", "rank_lawyers", "3-Hour Dispatch", "Bar Seal & Sign"],
+    returnTitle: "RETURN STREAM: Verified Countersigned Legal Memo & Official Bar Seal",
+    returnSub: "Tamper-Proof Audit Trail • Instant Fee Disbursement to Advocate",
+  },
+  mcp: {
+    connectorLabels: ["JSON-RPC 2.0", "search_statutes", "check_act_status", "search_case_law", "Proxy-Safe POST"],
+    returnTitle: "RETURN STREAM: Proxy-Safe Inline JSON-RPC 2.0 Response · Sub-280ms Latency · Zero SSE Drops",
+    returnSub: "8 Production Legal Tools • 2 Dynamic Resources (legal://) • 2 Research Prompt Templates",
+  },
+};
 
-  const positions = [
-    { x: 20, y: startY },
-    { x: 20 + (nodeWidth + gap), y: startY },
-    { x: 20 + (nodeWidth + gap) * 2, y: startY },
-    { x: 20 + (nodeWidth + gap) * 3, y: startY },
-    { x: 20 + (nodeWidth + gap) * 4, y: startY },
-    { x: 20 + (nodeWidth + gap) * 5, y: startY },
-    { x: 20 + (nodeWidth + gap) * 6, y: startY },
-  ];
-
-  return (
-    <g>
-      {/* Primary Connectors (Between consecutive nodes) */}
-      {positions.slice(0, 6).map((pos, idx) => {
-        const fromX = pos.x + nodeWidth;
-        const toX = positions[idx + 1].x;
-        const midY = startY + nodeHeight / 2;
-        const labels = [
-          "Upload Stream",
-          "AST Parsing",
-          "Missing Checks",
-          "LLaMA 70B Scorer",
-          "Statutory Match",
-          "DOCX Memo Stream",
-        ];
-        return (
-          <g key={idx}>
-            <path
-              d={`M ${fromX} ${midY} L ${toX - 2} ${midY}`}
-              stroke="#C45B3C"
-              strokeWidth="2"
-              fill="none"
-              markerEnd="url(#arch-arrow)"
-              strokeDasharray={animateFlow ? "6 3" : "none"}
-              className={animateFlow ? "arch-flowing-path" : ""}
-            />
-            <text
-              x={(fromX + toX) / 2}
-              y={midY - 7}
-              textAnchor="middle"
-              fill="#C45B3C"
-              fontSize="7"
-              fontWeight="800"
-            >
-              {labels[idx]}
-            </text>
-          </g>
-        );
-      })}
-
-      {/* Return Stream: Arc from Node 6 back to Node 0 */}
-      <path
-        d={`M ${positions[6].x + nodeWidth / 2} ${startY + nodeHeight} C ${
-          positions[6].x + nodeWidth / 2
-        } 220, ${positions[0].x + nodeWidth / 2} 220, ${positions[0].x + nodeWidth / 2} ${
-          startY + nodeHeight + 8
-        }`}
-        stroke="#1E5C40"
-        strokeWidth="2.2"
-        strokeDasharray={animateFlow ? "6 4" : "none"}
-        fill="none"
-        markerEnd="url(#arch-return-arrow)"
-        className={animateFlow ? "arch-return-flowing" : ""}
-      />
-
-      {/* Return Stream Badge */}
-      <g transform="translate(190, 202)">
-        <rect
-          width="680"
-          height="32"
-          rx="6"
-          fill="#FFFDF9"
-          stroke="#1E5C40"
-          strokeWidth="1.2"
-          filter="drop-shadow(0 2px 6px rgba(30,92,64,0.08))"
-        />
-        <text x="340" y="15" textAnchor="middle" fill="#1E5C40" fontSize="9" fontWeight="800">
-          RETURN STREAM: 30-Second Audit Memo · Severity Ranked Findings · DOCX Redlines
-        </text>
-        <text x="340" y="26" textAnchor="middle" fill="#786B60" fontSize="7.8">
-          Executive Health Score (0-100) • Mandatory Statutory Compliance Validation
-        </text>
-      </g>
-
-      {/* Render 7 Nodes */}
-      {nodes.map((node, idx) => {
-        const pos = positions[idx] || { x: 0, y: 0 };
-        const isSelected = selectedNodeId === node.id;
-        const isHovered = hoveredNodeId === node.id;
-
-        return (
-          <SvgNodeCard
-            key={node.id}
-            node={node}
-            x={pos.x}
-            y={pos.y}
-            width={nodeWidth}
-            height={nodeHeight}
-            isSelected={isSelected}
-            isHovered={isHovered}
-            accentColor={
-              idx === 0 ? "#1E5C40" : idx === 1 ? "#C45B3C" : idx === 4 ? "#8F5A0A" : "#243E56"
-            }
-            onClick={() => onSelectNode(node.id)}
-            onMouseEnter={() => onHoverNode(node.id)}
-            onMouseLeave={() => onHoverNode(null)}
-          />
-        );
-      })}
-    </g>
-  );
-}
-
-// ── 3. LAWYER HITL SYSTEM TOPOLOGY (5 Nodes) ──
-function LawyerTopology({
-  nodes,
-  selectedNodeId,
-  hoveredNodeId,
-  animateFlow,
-  onSelectNode,
-  onHoverNode,
-}: TopologyProps) {
-  const nodeWidth = 170;
-  const nodeHeight = 138;
-  const startY = 38;
-  const gap = 32;
-
-  const positions = [
-    { x: 35, y: startY },
-    { x: 35 + (nodeWidth + gap), y: startY },
-    { x: 35 + (nodeWidth + gap) * 2, y: startY },
-    { x: 35 + (nodeWidth + gap) * 3, y: startY },
-    { x: 35 + (nodeWidth + gap) * 4, y: startY },
-  ];
-
-  return (
-    <g>
-      {/* Primary Connectors (Between consecutive nodes) */}
-      {positions.slice(0, 4).map((pos, idx) => {
-        const fromX = pos.x + nodeWidth;
-        const toX = positions[idx + 1].x;
-        const midY = startY + nodeHeight / 2;
-        const labels = [
-          "POST /inquiries",
-          "rank_lawyers",
-          "3-Hour Dispatch",
-          "Bar Seal & Sign",
-        ];
-        return (
-          <g key={idx}>
-            <path
-              d={`M ${fromX} ${midY} L ${toX - 2} ${midY}`}
-              stroke="#C45B3C"
-              strokeWidth="2"
-              fill="none"
-              markerEnd="url(#arch-arrow)"
-              strokeDasharray={animateFlow ? "6 3" : "none"}
-              className={animateFlow ? "arch-flowing-path" : ""}
-            />
-            <text
-              x={(fromX + toX) / 2}
-              y={midY - 7}
-              textAnchor="middle"
-              fill="#C45B3C"
-              fontSize="7.5"
-              fontWeight="800"
-            >
-              {labels[idx]}
-            </text>
-          </g>
-        );
-      })}
-
-      {/* Return Stream: Arc from Node 4 back to Node 0 */}
-      <path
-        d={`M ${positions[4].x + nodeWidth / 2} ${startY + nodeHeight} C ${
-          positions[4].x + nodeWidth / 2
-        } 220, ${positions[0].x + nodeWidth / 2} 220, ${positions[0].x + nodeWidth / 2} ${
-          startY + nodeHeight + 8
-        }`}
-        stroke="#1E5C40"
-        strokeWidth="2.2"
-        strokeDasharray={animateFlow ? "6 4" : "none"}
-        fill="none"
-        markerEnd="url(#arch-return-arrow)"
-        className={animateFlow ? "arch-return-flowing" : ""}
-      />
-
-      {/* Return Stream Badge */}
-      <g transform="translate(200, 202)">
-        <rect
-          width="660"
-          height="32"
-          rx="6"
-          fill="#FFFDF9"
-          stroke="#1E5C40"
-          strokeWidth="1.2"
-          filter="drop-shadow(0 2px 6px rgba(30,92,64,0.08))"
-        />
-        <text x="330" y="15" textAnchor="middle" fill="#1E5C40" fontSize="9" fontWeight="800">
-          RETURN STREAM: Verified Countersigned Legal Memo & Official Bar Seal
-        </text>
-        <text x="330" y="26" textAnchor="middle" fill="#786B60" fontSize="7.8">
-          Tamper-Proof Audit Trail • Instant Fee Disbursement to Advocate
-        </text>
-      </g>
-
-      {/* Render 5 Nodes */}
-      {nodes.map((node, idx) => {
-        const pos = positions[idx] || { x: 0, y: 0 };
-        const isSelected = selectedNodeId === node.id;
-        const isHovered = hoveredNodeId === node.id;
-
-        return (
-          <SvgNodeCard
-            key={node.id}
-            node={node}
-            x={pos.x}
-            y={pos.y}
-            width={nodeWidth}
-            height={nodeHeight}
-            isSelected={isSelected}
-            isHovered={isHovered}
-            accentColor={
-              idx === 0 ? "#1E5C40" : idx === 1 ? "#C45B3C" : idx === 3 ? "#8F5A0A" : "#243E56"
-            }
-            onClick={() => onSelectNode(node.id)}
-            onMouseEnter={() => onHoverNode(node.id)}
-            onMouseLeave={() => onHoverNode(null)}
-          />
-        );
-      })}
-    </g>
-  );
-}
-
-// ── 4. FASTMCP TOOLS & SEARCH TOPOLOGY (Hub & Spoke - 6 Nodes) ──
-function McpTopology({
-  nodes,
-  selectedNodeId,
-  hoveredNodeId,
-  animateFlow,
-  onSelectNode,
-  onHoverNode,
-}: TopologyProps) {
-  const nodeWidth = 142;
-  const nodeHeight = 138;
-  const startY = 38;
-  const gap = 28;
-
-  const positions = [
-    { x: 20, y: startY },
-    { x: 20 + (nodeWidth + gap), y: startY },
-    { x: 20 + (nodeWidth + gap) * 2, y: startY },
-    { x: 20 + (nodeWidth + gap) * 3, y: startY },
-    { x: 20 + (nodeWidth + gap) * 4, y: startY },
-    { x: 20 + (nodeWidth + gap) * 5, y: startY },
-  ];
-
-  return (
-    <g>
-      {/* Primary Connectors (Between consecutive nodes) */}
-      {positions.slice(0, 5).map((pos, idx) => {
-        const fromX = pos.x + nodeWidth;
-        const toX = positions[idx + 1].x;
-        const midY = startY + nodeHeight / 2;
-        const labels = [
-          "JSON-RPC 2.0",
-          "search_statutes",
-          "check_act_status",
-          "search_case_law",
-          "Proxy-Safe POST",
-        ];
-        return (
-          <g key={idx}>
-            <path
-              d={`M ${fromX} ${midY} L ${toX - 2} ${midY}`}
-              stroke="#C45B3C"
-              strokeWidth="2"
-              fill="none"
-              markerEnd="url(#arch-arrow)"
-              strokeDasharray={animateFlow ? "6 3" : "none"}
-              className={animateFlow ? "arch-flowing-path" : ""}
-            />
-            <text
-              x={(fromX + toX) / 2}
-              y={midY - 7}
-              textAnchor="middle"
-              fill="#C45B3C"
-              fontSize="7.5"
-              fontWeight="800"
-            >
-              {labels[idx]}
-            </text>
-          </g>
-        );
-      })}
-
-      {/* Return Stream: Arc from Node 5 back to Node 0 */}
-      <path
-        d={`M ${positions[5].x + nodeWidth / 2} ${startY + nodeHeight} C ${
-          positions[5].x + nodeWidth / 2
-        } 220, ${positions[0].x + nodeWidth / 2} 220, ${positions[0].x + nodeWidth / 2} ${
-          startY + nodeHeight + 8
-        }`}
-        stroke="#1E5C40"
-        strokeWidth="2.2"
-        strokeDasharray={animateFlow ? "6 4" : "none"}
-        fill="none"
-        markerEnd="url(#arch-return-arrow)"
-        className={animateFlow ? "arch-return-flowing" : ""}
-      />
-
-      {/* Return Stream Banner */}
-      <g transform="translate(200, 202)">
-        <rect
-          width="660"
-          height="32"
-          rx="6"
-          fill="#FFFDF9"
-          stroke="#1E5C40"
-          strokeWidth="1.2"
-          filter="drop-shadow(0 2px 6px rgba(30,92,64,0.08))"
-        />
-        <text x="330" y="15" textAnchor="middle" fill="#1E5C40" fontSize="9" fontWeight="800">
-          RETURN STREAM: Proxy-Safe Inline JSON-RPC 2.0 Response · Sub-280ms Latency · Zero SSE Drops
-        </text>
-        <text x="330" y="26" textAnchor="middle" fill="#786B60" fontSize="7.8">
-          8 Production Legal Tools • 2 Dynamic Resources (legal://) • 2 Research Prompt Templates
-        </text>
-      </g>
-
-      {/* Render 6 Nodes */}
-      {nodes.map((node, idx) => {
-        const pos = positions[idx] || { x: 0, y: 0 };
-        const isSelected = selectedNodeId === node.id;
-        const isHovered = hoveredNodeId === node.id;
-
-        return (
-          <SvgNodeCard
-            key={node.id}
-            node={node}
-            x={pos.x}
-            y={pos.y}
-            width={nodeWidth}
-            height={nodeHeight}
-            isSelected={isSelected}
-            isHovered={isHovered}
-            accentColor={
-              idx === 0 ? "#1E5C40" : idx === 1 ? "#C45B3C" : idx === 3 ? "#8F5A0A" : idx === 4 ? "#1E5C40" : "#243E56"
-            }
-            onClick={() => onSelectNode(node.id)}
-            onMouseEnter={() => onHoverNode(node.id)}
-            onMouseLeave={() => onHoverNode(null)}
-          />
-        );
-      })}
-    </g>
-  );
+function renderTopology(
+  activeSystemId: string,
+  props: Omit<TopologyData, "connectorLabels" | "returnTitle" | "returnSub">
+) {
+  const flow = TOPOLOGY_FLOWS[activeSystemId as keyof typeof TOPOLOGY_FLOWS];
+  return <TopologyGrid {...props} connectorLabels={flow.connectorLabels} returnTitle={flow.returnTitle} returnSub={flow.returnSub} />;
 }
 
 // ── CLEAN BULLET RETRIEVER HELPER ──
@@ -1661,6 +1295,7 @@ function getNodeBullets(node: ArchitectureNode): string[] {
 // ── SVG NODE CARD COMPONENT ──
 interface SvgNodeCardProps {
   node: ArchitectureNode;
+  idx: number;
   x: number;
   y: number;
   width: number;
@@ -1675,6 +1310,7 @@ interface SvgNodeCardProps {
 
 function SvgNodeCard({
   node,
+  idx,
   x,
   y,
   width,
@@ -1702,67 +1338,47 @@ function SvgNodeCard({
       <rect
         width={width}
         height={height}
-        rx="8"
-        fill="url(#nodeGrad)"
-        stroke={isSelected ? "#C45B3C" : isHovered ? "#C45B3C" : "#ECDFD0"}
-        strokeWidth={isSelected ? "2.5" : isHovered ? "2" : "1.5"}
+        rx="0"
+        fill="#141414"
+        stroke={isSelected ? "#ffffff" : isHovered ? "#d4d4d4" : "#2e2e2e"}
+        strokeWidth={isSelected ? "2" : isHovered ? "1.5" : "1"}
       />
 
-      {/* Top accent strip */}
-      <rect x="0" y="0" width={width} height="4" rx="2" fill={accentColor} />
-
-      {/* Layer tag */}
-      <text
-        x={width / 2}
-        y="19"
-        textAnchor="middle"
-        fill={accentColor}
-        fontSize="7.5"
-        fontWeight="800"
-        letterSpacing="0.08em"
-      >
-        {node.layer.toUpperCase()}
+      {/* Big phase number */}
+      <text x="18" y="44" fill="#333333" fontSize="30" fontWeight="800">
+        {String(idx + 1).padStart(2, "0")}
       </text>
 
-      {/* Component Title */}
-      <text
-        x={width / 2}
-        y="36"
-        textAnchor="middle"
-        fill="#2E2117"
-        fontSize="11"
-        fontWeight="700"
-      >
-        {node.label.length > 20 ? node.label.slice(0, 18) + "…" : node.label}
+      {/* Layer name */}
+      <text x="72" y="28" fill="#8a8a8a" fontSize="10.5" fontWeight="800" letterSpacing="0.14em">
+        {node.layer.replace(/^\d+\.\s*/, "").toUpperCase()}
       </text>
 
-      {/* Tech tag pill */}
-      <g transform={`translate(${width / 2 - 45}, 43)`}>
-        <rect width="90" height="15" rx="3" fill="#FBF4EC" stroke="#ECDFD0" strokeWidth="0.8" />
-        <text x="45" y="10.5" textAnchor="middle" fill="#786B60" fontSize="7" fontWeight="700">
-          {node.tech.length > 18 ? node.tech.slice(0, 16) + "…" : node.tech}
-        </text>
-      </g>
+      {/* Component title */}
+      <text x="72" y="50" fill="#ffffff" fontSize="17" fontWeight="700">
+        {node.label.length > 30 ? node.label.slice(0, 28) + "…" : node.label}
+      </text>
 
-      <line x1="10" y1="64" x2={width - 10} y2="64" stroke="#F0E5D8" strokeWidth="1" />
+      {/* Tech stack — one small mono line */}
+      <text x="18" y="82" fill="#8a8a8a" fontSize="10.5" fontFamily="monospace">
+        {node.tech.length > 52 ? node.tech.slice(0, 50) + "…" : node.tech}
+      </text>
 
-      {/* 3 Clean Key Role Bullets */}
+      <line x1="18" y1="100" x2={width - 18} y2="100" stroke="#2e2e2e" strokeWidth="1" />
+
+      {/* Role bullets — plain dashes */}
       {bullets.slice(0, 3).map((b, i) => (
-        <g key={i} transform={`translate(10, ${77 + i * 16})`}>
-          <circle cx="3" cy="-3" r="1.5" fill={accentColor} />
-          <text x="8" y="0" fill="#4A3B32" fontSize="7.6" fontWeight="500">
-            {b.length > 22 ? b.slice(0, 20) + "…" : b}
-          </text>
-        </g>
+        <text key={i} x="18" y={124 + i * 21} fill="#a3a3a3" fontSize="11.5" fontWeight="500">
+          — {b.length > 44 ? b.slice(0, 42) + "…" : b}
+        </text>
       ))}
 
-      {/* Bottom status badge */}
-      <g transform={`translate(10, ${height - 16})`}>
-        <circle cx="4" cy="1" r="2.5" fill={isSelected ? "#C45B3C" : "#1E5C40"} />
-        <text x="11" y="4" fill={isSelected ? "#C45B3C" : "#786B60"} fontSize="7" fontWeight="700">
-          {isSelected ? "ACTIVE NODE ✓" : "VERIFIED & LIVE"}
+      {/* Selected marker only */}
+      {isSelected && (
+        <text x={width - 18} y="44" textAnchor="end" fill="#ffffff" fontSize="10.5" fontWeight="800" letterSpacing="0.1em">
+          ● ACTIVE
         </text>
-      </g>
+      )}
     </g>
   );
 }

@@ -4,6 +4,7 @@
  */
 import api from "@/lib/api";
 import { TokenResponse } from "@/lib/auth";
+import { maskPii } from "@/lib/piiMasker";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -172,6 +173,7 @@ export interface ContractAuditResult {
   audited_for?: string;
   stamp_duty_advisory?: string;
   hitl_status?: HITLStatus | string;
+  pii_redactions_count?: number;
   lawyer_name?: string | null;
   lawyer_notes?: string | null;
   lawyer_signature?: string | null;
@@ -225,14 +227,35 @@ export interface VerificationRequestResponse {
 export async function uploadContract(
   file: File,
   title?: string,
-  auditedFor: string = "CLIENT"
+  auditedFor: string = "CLIENT",
+  piiMaskEnabled: boolean = true
 ): Promise<ContractAuditResult> {
+  let fileToUpload = file;
+  let clientRedactions = 0;
+
+  if (piiMaskEnabled && file.name.toLowerCase().endsWith(".txt")) {
+    try {
+      const rawText = await file.text();
+      const masked = maskPii(rawText, true);
+      clientRedactions = masked.stats.totalRedactions;
+      fileToUpload = new File([masked.redactedText], file.name, {
+        type: file.type || "text/plain",
+      });
+    } catch (e) {
+      console.warn("Client PII masking failed before contract upload:", e);
+    }
+  }
+
   const formData = new FormData();
   const fileTitle = title || file.name.replace(/\.[^/.]+$/, "") || "Contract Document";
   formData.append("title", fileTitle);
-  formData.append("file", file);
+  formData.append("file", fileToUpload);
   formData.append("audited_for", auditedFor);
-  return api.upload<ContractAuditResult>("/api/contracts/upload", formData, undefined, 180000);
+  const result = await api.upload<ContractAuditResult>("/api/contracts/upload", formData, undefined, 180000);
+  if (clientRedactions > 0 && (!result.pii_redactions_count || result.pii_redactions_count === 0)) {
+    result.pii_redactions_count = clientRedactions;
+  }
+  return result;
 }
 
 /** Get user's contract audit history (GET /api/contracts/history) */

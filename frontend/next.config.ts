@@ -14,12 +14,12 @@ const nextConfig: NextConfig = {
 			},
 		},
 	},
-	// ✅ FIX: Supabase থেকে ছবি লোড করার পারমিশন
+	// Remote pattern rules for Supabase storage image loading
 	images: {
 		remotePatterns: [
 			{
 				protocol: "https",
-				hostname: "*.supabase.co", // Supabase এর সব সাবডোমেইন allow করবে
+				hostname: "*.supabase.co", // Allow all Supabase storage subdomains
 				port: "",
 				pathname: "/**",
 			},

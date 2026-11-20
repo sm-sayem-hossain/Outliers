@@ -378,6 +378,13 @@ export function generateRealContractAuditMarkdown(
     result.contract_id || result.id || "LIVE"
   }\` | **Audit Perspective:** **${auditedForLabel}** | **Jurisdiction:** Laws of Bangladesh\n\n`;
 
+  if (result.pii_redactions_count && result.pii_redactions_count > 0) {
+    md += `> [!NOTE]\n`;
+    md += isBn
+      ? `> **🔒 সার্বভৌম ক্লায়েন্ট PII সুরক্ষা প্রয়োগকৃত:** চুক্তিতে থাকা মোট ${result.pii_redactions_count}টি সংবেদনশীল ব্যক্তিগত/আর্থিক তথ্য (এনআইডি, মোবাইল নম্বর, ইমেইল, পক্ষসমূহের নাম) AI বিশ্লেষণের পূর্বে সার্বভৌমভাবে মাস্ক ও সুরক্ষিত করা হয়েছে।\n\n`
+      : `> **🔒 SOVEREIGN PII SHIELD APPLIED:** ${result.pii_redactions_count} sensitive PII entities (NIDs, phone numbers, emails, party identities) were scrubbed and masked prior to AI reasoning.\n\n`;
+  }
+
   md += `| Statutory Risk Grade | Risk Score | High Risk Violations | Review Status |\n`;
   md += `| :--- | :---: | :---: | :--- |\n`;
   md += `| **${riskGrade}** | **${riskScore}/100** | **${highRiskCount} Clauses** | ${
